@@ -89,4 +89,4 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: navic-release
-          path: packages/*.ipa
+          path: iosApp/packages/*.ipa
