@@ -9,20 +9,18 @@ import kotlinx.coroutines.launch
 import paige.navic.data.repository.TracksRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.util.UiState
-import paige.subsonic.api.model.Album
-import paige.subsonic.api.model.AnyTrack
-import paige.subsonic.api.model.AnyTracks
-import paige.subsonic.api.model.Playlist
+import paige.subsonic.api.model.Track
+import paige.subsonic.api.model.TrackCollection
 
 class TracksViewModel(
-	private val partialTracks: Any,
+	private val partialCollection: TrackCollection,
 	private val repository: TracksRepository = TracksRepository()
 ) : ViewModel() {
-	private val _tracksState = MutableStateFlow<UiState<AnyTracks>>(UiState.Loading)
-	val tracksState: StateFlow<UiState<AnyTracks>> = _tracksState.asStateFlow()
+	private val _tracksState = MutableStateFlow<UiState<TrackCollection>>(UiState.Loading)
+	val tracksState: StateFlow<UiState<TrackCollection>> = _tracksState.asStateFlow()
 
-	private val _selectedTrack = MutableStateFlow<AnyTrack?>(null)
-	val selectedTrack: StateFlow<AnyTrack?> = _selectedTrack.asStateFlow()
+	private val _selectedTrack = MutableStateFlow<Track?>(null)
+	val selectedTrack: StateFlow<Track?> = _selectedTrack.asStateFlow()
 
 	private val _starredState = MutableStateFlow<UiState<Boolean>>(UiState.Success(false))
 	val starredState = _starredState.asStateFlow()
@@ -39,19 +37,16 @@ class TracksViewModel(
 		viewModelScope.launch {
 			_tracksState.value = UiState.Loading
 			try {
-				val albums = when (partialTracks) {
-					is Album -> repository.getTracks(partialTracks)
-					is Playlist -> repository.getTracks(partialTracks)
-					else -> error("Invalid partialTracks")
-				}
-				_tracksState.value = UiState.Success(albums)
+				_tracksState.value = UiState.Success(
+					repository.fetchWithAllTracks(partialCollection)
+				)
 			} catch (e: Exception) {
 				_tracksState.value = UiState.Error(e)
 			}
 		}
 	}
 
-	fun selectTrack(track: AnyTrack) {
+	fun selectTrack(track: Track) {
 		viewModelScope.launch {
 			_selectedTrack.value = track
 			_starredState.value = UiState.Loading

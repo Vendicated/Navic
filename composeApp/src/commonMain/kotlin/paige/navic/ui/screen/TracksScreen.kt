@@ -63,19 +63,19 @@ import paige.navic.ui.theme.mapleMono
 import paige.navic.ui.viewmodel.TracksViewModel
 import paige.navic.util.UiState
 import paige.navic.util.shimmerLoading
-import paige.subsonic.api.model.AnyTrack
-import paige.subsonic.api.model.AnyTracks
+import paige.subsonic.api.model.Track
+import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
 
 private class TracksScreenScope(
 	val player: MediaPlayer,
-	val tracks: AnyTracks
+	val tracks: TrackCollection
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TracksScreen(
-	partialTracks: Any,
+	partialTracks: TrackCollection,
 	viewModel: TracksViewModel = viewModel(key = partialTracks.toString()) {
 		TracksViewModel(partialTracks)
 	}
@@ -238,7 +238,7 @@ private fun TracksScreenScope.Metadata() {
 
 @Composable
 private fun TracksScreenScope.TrackRow(
-	track: AnyTrack,
+	track: Track,
 	onClick: (() -> Unit)? = null,
 	onLongClick: (() -> Unit)? = null
 ) {

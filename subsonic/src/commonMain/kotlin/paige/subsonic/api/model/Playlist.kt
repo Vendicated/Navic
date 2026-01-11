@@ -19,46 +19,58 @@ data class PlaylistsResponse(
 
 @Serializable
 data class Playlist(
+	override val coverArt: String?,
+	override val duration: Int,
+	override val id: String,
 	val changed: String?,
-	val coverArt: String?,
 	val created: String,
-	val duration: Int,
 	val entry: List<PlaylistEntry>?,
-	val id: String,
 	val name: String,
 	val comment: String?,
 	val owner: String,
 	val `public`: Boolean?,
 	val songCount: Int,
-)
+) : TrackCollection {
+	override val title: String
+		get() = name
+
+	override val subtitle: String?
+		get() = comment
+
+	override val tracks: List<Track>
+		get() = entry.orEmpty()
+
+	override val trackCount: Int
+		get() = songCount
+}
 
 @Serializable
 data class PlaylistEntry(
-	val album: String?,
-	val albumId: String?,
-	val artist: String?,
-	val artistId: String?,
-	val bitRate: Int?,
-	val contentType: String?,
-	val coverArt: String?,
-	val created: String?,
+	override val album: String?,
+	override val albumId: String?,
+	override val artist: String?,
+	override val artistId: String?,
+	override val bitRate: Int?,
+	override val contentType: String?,
+	override val coverArt: String?,
+	override val created: String?,
 	val discNumber: Int?,
-	val duration: Int?,
-	val genre: String?,
-	val id: String,
-	val isDir: Boolean?,
-	val isVideo: Boolean?,
-	val parent: String?,
-	val path: String?,
-	val playCount: Int?,
-	val size: Int?,
-	val suffix: String?,
-	val starred: String?,
-	val userRating: Int?,
-	val title: String,
-	val track: Int?,
+	override val duration: Int?,
+	override val genre: String?,
+	override val id: String,
+	override val isDir: Boolean?,
+	override val isVideo: Boolean?,
+	override val parent: String?,
+	override val path: String?,
+	override val playCount: Int?,
+	override val size: Int?,
+	override val suffix: String?,
+	override val starred: String?,
+	override val userRating: Int?,
+	override val title: String,
+	override val track: Int?,
 	val transcodedContentType: String?,
 	val transcodedSuffix: String?,
-	val type: String?,
-	val year: Int?,
-)
+	override val type: String?,
+	override val year: Int?,
+) : Track

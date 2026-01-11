@@ -42,13 +42,14 @@ import paige.navic.ui.screen.SearchScreen
 import paige.navic.ui.screen.SettingsScreen
 import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
+import paige.subsonic.api.model.TrackCollection
 
 data object Library
 data object Playlists
 data object Artists
 data object Settings
 data object Search
-data class Tracks(val partialTracks: Any)
+data class Tracks(val partialCollection: TrackCollection)
 
 val LocalCtx = staticCompositionLocalOf<Ctx> {
 	error("no ctx")
@@ -122,7 +123,7 @@ fun App() {
 									SettingsScreen()
 								}
 								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
-									TracksScreen(key.partialTracks)
+									TracksScreen(key.partialCollection)
 								}
 								entry<Search> {
 									SearchScreen()

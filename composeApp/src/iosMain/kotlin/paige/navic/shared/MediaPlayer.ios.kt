@@ -16,8 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.model.AnyTrack
-import paige.subsonic.api.model.AnyTracks
+import paige.subsonic.api.model.Track
+import paige.subsonic.api.model.TrackCollection
 import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.setActive
@@ -81,12 +81,12 @@ class IOSMediaPlayer(
 
 	private val player = AVPlayer()
 
-	private var playlist: List<AnyTrack> = emptyList()
+	private var playlist: List<Track> = emptyList()
 	private var currentSongIndex = 0
 	private var preparedUrls: List<String> = emptyList()
 
-	private val _tracks = mutableStateOf<AnyTracks?>(null)
-	override var tracks: AnyTracks?
+	private val _tracks = mutableStateOf<TrackCollection?>(null)
+	override var tracks: TrackCollection?
 		get() = _tracks.value
 		set(value) { _tracks.value = value }
 
@@ -159,7 +159,7 @@ class IOSMediaPlayer(
 		}
 	}
 
-	override fun play(tracks: AnyTracks, songIndex: Int) {
+	override fun play(tracks: TrackCollection, songIndex: Int) {
 		this.tracks = tracks
 		this.playlist = tracks.tracks
 
@@ -291,7 +291,7 @@ class IOSMediaPlayer(
 	}
 
 	@OptIn(ExperimentalForeignApi::class)
-	private fun updateNowPlayingInfo(track: AnyTrack?) {
+	private fun updateNowPlayingInfo(track: Track?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
 			return

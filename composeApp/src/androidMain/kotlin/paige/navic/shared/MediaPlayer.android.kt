@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
-import paige.subsonic.api.model.AnyTracks
+import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Clock
 
 class PlaybackService : MediaSessionService() {
@@ -71,8 +71,8 @@ private class MediaPlayerImpl(
 	private var controllerFuture: ListenableFuture<MediaController>? = null
 	private var controller: MediaController? = null
 
-	private val _tracks = mutableStateOf<AnyTracks?>(null)
-	override var tracks: AnyTracks?
+	private val _tracks = mutableStateOf<TrackCollection?>(null)
+	override var tracks: TrackCollection?
 		get() = _tracks.value
 		set(value) { _tracks.value = value }
 
@@ -179,7 +179,7 @@ private class MediaPlayerImpl(
 		}
 	}
 
-	override fun play(tracks: AnyTracks, songIndex: Int) {
+	override fun play(tracks: TrackCollection, songIndex: Int) {
 		this.tracks = tracks
 
 		scope.launch(Dispatchers.IO) {
