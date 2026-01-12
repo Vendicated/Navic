@@ -16,6 +16,7 @@
 	<string name="option_system_font">Systemschriftart verwenden</string>
 	<string name="option_short_navigation_bar">Kurze Navigationsleiste verwenden</string>
 	<string name="option_round_album_covers">Abgerundete Covergrafiken</string>
+	<string name="option_cover_art_size">Albumcovergröße</string>
 	<string name="option_navbar_tab_positions">Registerkartenpositionen bearbeiten</string>
 	<string name="option_share_expires">Läuft ab</string>
 	<string name="option_account_navidrome_instance">Instanz</string>

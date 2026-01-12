@@ -1,11 +1,14 @@
 package paige.navic.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,9 +19,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.keyboard_arrow_down
 import navic.composeapp.generated.resources.keyboard_arrow_up
+import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_round_album_covers
 import navic.composeapp.generated.resources.option_short_navigation_bar
@@ -37,6 +42,7 @@ fun ThemeSettings() {
 	var useSystemFont by rememberBooleanSetting("useSystemFont", false)
 	var useShortNavbar by rememberBooleanSetting("useShortNavbar", false)
 	var roundCoverArt by rememberBooleanSetting("roundCoverArt", true)
+	var artGridSize by rememberFloatSetting("artGridSize", 150f)
 	Form {
 		FormRow(
 			onClick = { expanded = !expanded }
@@ -70,6 +76,19 @@ fun ThemeSettings() {
 					checked = roundCoverArt,
 					onCheckedChange = { roundCoverArt = it }
 				)
+			}
+			FormRow {
+				Column(Modifier.fillMaxWidth()) {
+					Text(stringResource(Res.string.option_cover_art_size))
+					Slider(
+						value = artGridSize,
+						onValueChange = {
+							artGridSize = it
+						},
+						valueRange = 25f..400f,
+						steps = 12,
+					)
+				}
 			}
 			FormRow(
 				onClick = {

@@ -27,6 +27,7 @@ import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import dev.burnoo.compose.remembersetting.rememberFloatSetting
 import paige.navic.LocalImageBuilder
 import paige.navic.util.shimmerLoading
 
@@ -35,9 +36,10 @@ fun ArtGrid(
 	modifier: Modifier = Modifier,
 	content: LazyGridScope.() -> Unit
 ) {
+	var artGridSize by rememberFloatSetting("artGridSize", 150f)
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
-		columns = GridCells.Adaptive(150.dp),
+		columns = GridCells.Adaptive(artGridSize.dp),
 		contentPadding = PaddingValues(
 			start = 16.dp,
 			top = 16.dp,
