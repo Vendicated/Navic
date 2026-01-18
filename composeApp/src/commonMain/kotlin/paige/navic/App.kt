@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -142,25 +143,25 @@ fun App() {
 							sceneStrategy = sceneStrategy,
 							onBack = { backStack.removeLastOrNull() },
 							entryProvider = entryProvider {
-								entry<Library>(metadata = metadata + SupportingPaneSceneStrategy.mainPane()) {
+								entry<Library>(metadata = metadata + ListDetailSceneStrategy.listPane("root")) {
 									LibraryScreen()
 								}
-								entry<Playlists>(metadata = metadata) {
+								entry<Playlists>(metadata = metadata + ListDetailSceneStrategy.listPane("root")) {
 									PlaylistsScreen()
 								}
-								entry<Artists>(metadata = metadata) {
+								entry<Artists>(metadata = metadata + ListDetailSceneStrategy.listPane("root")) {
 									ArtistsScreen()
 								}
-								entry<Settings> {
+								entry<Settings>(metadata = ListDetailSceneStrategy.listPane("settings")) {
 									SettingsScreen()
 								}
-								entry<SettingsAppearance> {
+								entry<SettingsAppearance>(metadata = ListDetailSceneStrategy.detailPane("settings")) {
 									SettingsAppearanceScreen()
 								}
-								entry<SettingsBehaviour> {
+								entry<SettingsBehaviour>(metadata = ListDetailSceneStrategy.detailPane("settings")) {
 									SettingsBehaviourScreen()
 								}
-								entry<Tracks>(metadata = SupportingPaneSceneStrategy.supportingPane()) { key ->
+								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane("root")) { key ->
 									TracksScreen(key.partialCollection)
 								}
 								entry<Search> {

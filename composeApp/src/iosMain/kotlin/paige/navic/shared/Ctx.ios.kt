@@ -2,6 +2,7 @@ package paige.navic.shared
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -28,8 +29,8 @@ actual fun rememberCtx(): Ctx {
 				+ " " + UIDevice.currentDevice.systemVersion)
 			override val colorScheme
 				get() = if (darkTheme)
-					expressiveLightColorScheme()
-				else lightColorScheme()
+					darkColorScheme()
+				else expressiveLightColorScheme()
 			override val sizeClass = sizeClass
 		}
 	}

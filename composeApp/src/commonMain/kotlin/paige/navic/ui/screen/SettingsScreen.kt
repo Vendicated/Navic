@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalNavStack
+import paige.navic.Settings
 import paige.navic.SettingsAppearance
 import paige.navic.SettingsBehaviour
 import paige.navic.ui.component.common.Form
@@ -74,6 +75,9 @@ private fun PageRow(
 	val backStack = LocalNavStack.current
 	FormRow(
 		onClick = {
+			if (backStack.last() !is Settings) {
+				backStack.removeLastOrNull()
+			}
 			backStack.add(destination)
 		},
 		horizontalArrangement = Arrangement.spacedBy(16.dp),

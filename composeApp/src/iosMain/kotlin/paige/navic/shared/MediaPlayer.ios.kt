@@ -19,27 +19,36 @@ import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
 import platform.AVFoundation.addPeriodicTimeObserverForInterval
 import platform.AVFoundation.currentItem
+import platform.AVFoundation.currentTime
 import platform.AVFoundation.duration
 import platform.AVFoundation.pause
 import platform.AVFoundation.play
 import platform.AVFoundation.removeTimeObserver
 import platform.AVFoundation.replaceCurrentItemWithPlayerItem
 import platform.AVFoundation.seekToTime
+import platform.CoreGraphics.CGSizeMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
+import platform.Foundation.NSData
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
+import platform.Foundation.dataWithContentsOfURL
 import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
+import platform.MediaPlayer.MPMediaItemArtwork
 import platform.MediaPlayer.MPMediaItemPropertyAlbumTitle
 import platform.MediaPlayer.MPMediaItemPropertyArtist
+import platform.MediaPlayer.MPMediaItemPropertyArtwork
 import platform.MediaPlayer.MPMediaItemPropertyPlaybackDuration
 import platform.MediaPlayer.MPMediaItemPropertyTitle
 import platform.MediaPlayer.MPNowPlayingInfoCenter
+import platform.MediaPlayer.MPNowPlayingInfoPropertyElapsedPlaybackTime
+import platform.MediaPlayer.MPNowPlayingInfoPropertyPlaybackRate
 import platform.MediaPlayer.MPRemoteCommandCenter
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusCommandFailed
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
+import platform.UIKit.UIImage
 
 @OptIn(ExperimentalForeignApi::class)
 class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
@@ -220,6 +229,22 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 				info[MPMediaItemPropertyPlaybackDuration] = seconds
 			}
 		}
+
+		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
+		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_uiState.value.isPaused) 0.0 else 1.0
+
+		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
+			boundsSize = CGSizeMake(512.0, 512.0),
+			requestHandler = {
+				return@MPMediaItemArtwork track.coverArt
+					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
+					?.let { NSURL.URLWithString(it) }
+					?.let { NSData.dataWithContentsOfURL(it) }
+					?.let { UIImage(data = it) } ?: UIImage()
+			}
+		)
+
+		MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = info
 	}
 
 	override fun onCleared() {
