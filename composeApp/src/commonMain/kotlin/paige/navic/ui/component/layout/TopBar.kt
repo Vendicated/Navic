@@ -210,6 +210,7 @@ private fun TopBarScope.Actions(
 			Box {
 				var expanded by remember { mutableStateOf(false) }
 				IconButton(
+					modifier = Modifier.padding(end = 12.dp),
 					onClick = {
 						ctx.clickSound()
 						expanded = true

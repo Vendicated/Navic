@@ -3,20 +3,26 @@ package paige.navic.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_delete
 import navic.composeapp.generated.resources.action_share
+import navic.composeapp.generated.resources.count_playlists
 import navic.composeapp.generated.resources.count_songs
 import navic.composeapp.generated.resources.playlist_remove
 import navic.composeapp.generated.resources.share
@@ -64,6 +70,23 @@ fun PlaylistsScreen(
 			is UiState.Success -> {
 				val playlists = (playlistsState as UiState.Success).data
 				ArtGrid {
+					stickyHeader { _ ->
+						Row(
+							Modifier
+								.background(MaterialTheme.colorScheme.surface)
+								.padding(bottom = 8.dp),
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Text(
+								pluralStringResource(
+									Res.plurals.count_playlists,
+									playlists.count(),
+									playlists.count()
+								),
+								color = MaterialTheme.colorScheme.onSurfaceVariant
+							)
+						}
+					}
 					items(playlists) { playlist ->
 						Box {
 							ArtGridItem(

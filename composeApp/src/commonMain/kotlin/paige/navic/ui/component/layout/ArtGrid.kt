@@ -84,7 +84,7 @@ fun ArtGridItem(
 		)
 		Text(
 			text = title,
-			style = MaterialTheme.typography.bodyMedium,
+			style = MaterialTheme.typography.titleSmallEmphasized,
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(top = 6.dp)

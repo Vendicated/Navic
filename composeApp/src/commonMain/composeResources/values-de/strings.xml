@@ -41,6 +41,16 @@
 		<item quantity="other">%1$d Alben</item>
 	</plurals>
 
+	<plurals name="count_playlists">
+		<item quantity="one">%1$d playlists</item>
+		<item quantity="other">%1$d playlists</item>
+	</plurals>
+
+	<plurals name="count_artists">
+		<item quantity="one">%1$d artist</item>
+		<item quantity="other">%1$d artists</item>
+	</plurals>
+
 	<string name="action_ok">OK</string>
 	<string name="action_play">Abspielen</string>
 	<string name="action_shuffle">Zufallswiedergabe</string>

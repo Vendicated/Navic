@@ -6,9 +6,9 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
@@ -16,18 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_remove_star
 import navic.composeapp.generated.resources.action_star
 import navic.composeapp.generated.resources.count_albums
+import navic.composeapp.generated.resources.count_artists
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.pluralStringResource
-import paige.navic.LocalCtx
-import paige.navic.LocalNavStack
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
@@ -72,16 +71,36 @@ fun ArtistsScreen(
 						verticalArrangement = Arrangement.spacedBy(12.dp),
 						horizontalArrangement = Arrangement.spacedBy(12.dp),
 					) {
-						grouped.forEach { (letter, artists) ->
-							item(span = { GridItemSpan(maxLineSpan) }) {
+						stickyHeader { _ ->
+							Row(
+								Modifier
+									.background(MaterialTheme.colorScheme.surface)
+									.padding(bottom = 8.dp),
+								verticalAlignment = Alignment.CenterVertically
+							) {
 								Text(
-									text = letter.toString(),
-									style = MaterialTheme.typography.headlineMedium,
-									modifier = Modifier.padding(
-										top = 16.dp,
-										bottom = 8.dp
-									)
+									pluralStringResource(
+										Res.plurals.count_artists,
+										it.data.count(),
+										it.data.count()
+									),
+									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
+							}
+						}
+						grouped.forEach { (letter, artists) ->
+							stickyHeader {
+								Row(
+									Modifier
+										.background(MaterialTheme.colorScheme.surface)
+										.padding(bottom = 8.dp),
+									verticalAlignment = Alignment.CenterVertically
+								) {
+									Text(
+										text = letter.toString(),
+										color = MaterialTheme.colorScheme.onSurfaceVariant
+									)
+								}
 							}
 							items(artists) { artist ->
 								Box {
