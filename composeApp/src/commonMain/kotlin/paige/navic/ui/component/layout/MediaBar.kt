@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -59,10 +60,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
+import ir.mahozad.multiplatform.wavyslider.material3.WaveAnimationSpecs
 import ir.mahozad.multiplatform.wavyslider.material3.WaveHeight
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
 import navic.composeapp.generated.resources.Res
@@ -83,7 +86,8 @@ import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
 import paige.navic.shared.Ctx
-import paige.navic.shared.MediaPlayer
+import paige.navic.shared.MediaPlayerViewModel
+import paige.navic.shared.PlayerUiState
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.screen.LyricsScreen
@@ -96,7 +100,8 @@ object MediaBarDefaults {
 }
 
 private class MediaBarScope(
-	val player: MediaPlayer,
+	val player: MediaPlayerViewModel,
+	val playerState: PlayerUiState,
 	val ctx: Ctx,
 	val animatedVisibilityScope: AnimatedVisibilityScope,
 	val sharedTransitionScope: SharedTransitionScope,
@@ -107,12 +112,14 @@ private class MediaBarScope(
 fun MediaBar(expanded: Boolean) {
 	val ctx = LocalCtx.current
 	val player = LocalMediaPlayer.current
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 	SharedTransitionLayout(Modifier.fillMaxHeight()) {
 		AnimatedContent(
 			expanded
 		) { targetState ->
 			MediaBarScope(
 				player,
+				playerState,
 				ctx,
 				this@AnimatedContent,
 				this@SharedTransitionLayout
@@ -157,8 +164,8 @@ private fun MediaBarScope.MainContent() {
 @Composable
 private fun MediaBarScope.DetailsContent() {
 	val pagerState = rememberPagerState(pageCount = { 2 })
-	val currentIndex by player.currentIndex
-	val currentTrack = player.tracks?.tracks?.getOrNull(currentIndex)
+	val currentIndex = playerState.currentIndex
+	val currentTrack = playerState.tracks?.tracks?.getOrNull(currentIndex)
 	Box(Modifier.fillMaxSize()) {
 		AlbumArt(
 			modifier = Modifier
@@ -219,7 +226,7 @@ private fun MediaBarScope.DetailsContent() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.PlayerView() {
-	val paused by player.isPaused
+	val paused = playerState.isPaused
 	val artSize by animateDpAsState(
 		if (paused)
 			256.dp
@@ -270,7 +277,7 @@ private fun MediaBarScope.PlayerView() {
 							text = Res.string.action_shuffle,
 							onClick = {
 								moreShown = false
-								player.tracks?.let {
+								playerState.tracks?.let {
 									when (it) {
 										is Album -> player.play(
 											it.copy(
@@ -325,8 +332,8 @@ private fun MediaBarScope.AlbumArt(
 ) {
 	AsyncImage(
 		modifier = modifier,
-		model = player.tracks?.coverArt,
-		contentDescription = player.tracks?.title,
+		model = playerState.tracks?.coverArt,
+		contentDescription = playerState.tracks?.title,
 		contentScale = ContentScale.Crop,
 	)
 }
@@ -336,7 +343,7 @@ private fun MediaBarScope.AlbumArt(
 private fun MediaBarScope.Info(
 	rowScope: RowScope
 ) {
-	val currentIndex by player.currentIndex
+	val currentIndex = playerState.currentIndex
 	val animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Rect>()
 	with(sharedTransitionScope) {
 		with(rowScope) {
@@ -351,12 +358,12 @@ private fun MediaBarScope.Info(
 				verticalArrangement = Arrangement.Center
 			) {
 				Text(
-					player.tracks?.tracks?.getOrNull(currentIndex)?.title.orEmpty(),
+					playerState.tracks?.tracks?.getOrNull(currentIndex)?.title.orEmpty(),
 					fontWeight = FontWeight(600),
 					maxLines = 1
 				)
 				Text(
-					player.tracks?.tracks?.getOrNull(currentIndex)?.artist.orEmpty(),
+					playerState.tracks?.tracks?.getOrNull(currentIndex)?.artist.orEmpty(),
 					style = MaterialTheme.typography.titleSmall,
 					maxLines = 1
 				)
@@ -368,7 +375,7 @@ private fun MediaBarScope.Info(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.Controls(expanded: Boolean) {
-	val paused by player.isPaused
+	val paused = playerState.isPaused
 	val size by animateDpAsState(
 		if (expanded) 40.dp else 32.dp,
 		animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
@@ -383,7 +390,7 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 	)
 
 	val modifier = Modifier.size(size)
-	val enabled = player.tracks != null
+	val enabled = playerState.tracks != null
 	val colors = ToggleButtonColors(
 		containerColor = if (expanded)
 			MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
@@ -484,8 +491,8 @@ private fun MediaBarScope.Controls(expanded: Boolean) {
 @Composable
 private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 	val interactionSource = remember { MutableInteractionSource() }
-	val progress by player.progress
-	val paused by player.isPaused
+	val progress = playerState.progress
+	val paused = playerState.isPaused
 	val waveHeight by animateDpAsState(
 		if (paused)
 			0.dp
@@ -528,15 +535,18 @@ private fun MediaBarScope.ProgressBar(expanded: Boolean) {
 				.fillMaxWidth()
 				.padding(horizontal = 15.dp),
 			colors = colors,
-			enabled = player.tracks != null,
+			enabled = playerState.tracks != null,
 			waveHeight = waveHeight,
+			animationSpecs = SliderDefaults.WaveAnimationSpecs.copy(
+				waveAppearanceAnimationSpec = snap()
+			),
 			value = progress,
 			onValueChange = { player.seek(it) },
 			thumb = {
 				SliderDefaults.Thumb(
 					interactionSource = interactionSource,
 					colors = colors,
-					enabled = player.tracks != null,
+					enabled = playerState.tracks != null,
 					thumbSize = DpSize(6.dp, 24.dp),
 					modifier = Modifier.clip(ContinuousCapsule)
 				)

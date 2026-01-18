@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import paige.navic.LocalMediaPlayer
 import paige.navic.ui.component.common.ErrorBox
@@ -57,6 +58,7 @@ fun LyricsScreen(
 	}
 ) {
 	val player = LocalMediaPlayer.current
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val state by viewModel.lyricsState.collectAsState()
 
 	val placeholder = @Composable {
@@ -77,7 +79,7 @@ fun LyricsScreen(
 	val track = track ?: return placeholder()
 	val duration = track.duration?.toDuration(DurationUnit.SECONDS) ?: return placeholder()
 
-	val progressState by player.progress
+	val progressState = playerState.progress
 	val currentDuration = duration * progressState.toDouble()
 
 	AnimatedContent(
@@ -121,7 +123,7 @@ fun LyricsScreen(
 								isActive = isActive,
 								onClick = {
 									player.seek((startTime / duration).toFloat())
-									if (player.isPaused.value) {
+									if (playerState.isPaused) {
 										player.resume()
 									}
 								},

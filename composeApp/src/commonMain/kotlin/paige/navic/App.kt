@@ -15,21 +15,26 @@ import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrate
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.NavDisplay.popTransitionSpec
 import androidx.navigation3.ui.NavDisplay.predictivePopTransitionSpec
 import androidx.navigation3.ui.NavDisplay.transitionSpec
+import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import paige.navic.shared.Ctx
-import paige.navic.shared.MediaPlayer
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.shared.rememberCtx
 import paige.navic.shared.rememberMediaPlayer
 import paige.navic.ui.component.layout.BottomBar
@@ -46,24 +51,47 @@ import paige.navic.ui.screen.TracksScreen
 import paige.navic.ui.theme.NavicTheme
 import paige.subsonic.api.model.TrackCollection
 
-data object Library
-data object Playlists
-data object Artists
-data object Settings
-data object SettingsAppearance
-data object SettingsBehaviour
-data object Search
-data class Tracks(val partialCollection: TrackCollection)
+@Serializable
+data object Library : NavKey
+@Serializable
+data object Playlists : NavKey
+@Serializable
+data object Artists : NavKey
+@Serializable
+data object Settings : NavKey
+@Serializable
+data object SettingsAppearance : NavKey
+@Serializable
+data object SettingsBehaviour : NavKey
+@Serializable
+data object Search : NavKey
+@Serializable
+data class Tracks(val partialCollection: TrackCollection) : NavKey
+
+private val config = SavedStateConfiguration {
+	serializersModule = SerializersModule {
+		polymorphic(NavKey::class) {
+			subclass(Library::class, Library.serializer())
+			subclass(Playlists::class, Playlists.serializer())
+			subclass(Artists::class, Artists.serializer())
+			subclass(Settings::class, Settings.serializer())
+			subclass(SettingsAppearance::class, SettingsAppearance.serializer())
+			subclass(SettingsBehaviour::class, SettingsBehaviour.serializer())
+			subclass(Search::class, Search.serializer())
+			subclass(Tracks::class, Tracks.serializer())
+		}
+	}
+}
 
 val LocalCtx = staticCompositionLocalOf<Ctx> {
 	error("no ctx")
 }
 
-val LocalMediaPlayer = staticCompositionLocalOf<MediaPlayer> {
+val LocalMediaPlayer = staticCompositionLocalOf<MediaPlayerViewModel> {
 	error("no media player")
 }
 
-val LocalNavStack = staticCompositionLocalOf<SnapshotStateList<Any>> {
+val LocalNavStack = staticCompositionLocalOf<NavBackStack<NavKey>> {
 	error("no backstack")
 }
 
@@ -81,7 +109,7 @@ fun App() {
 	val ctx = rememberCtx()
 	val platformContext = LocalPlatformContext.current
 	val mediaPlayer = rememberMediaPlayer()
-	val backStack = remember { mutableStateListOf<Any>(Library) }
+	val backStack = rememberNavBackStack(config, Library)
 	val sceneStrategy = rememberListDetailSceneStrategy<Any>()
 	val imageBuilder = ImageRequest.Builder(platformContext)
 		.crossfade(true)

@@ -1,18 +1,11 @@
 package paige.navic.shared
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.cinterop.BetaInteropApi
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.ObjCAction
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
@@ -26,80 +19,33 @@ import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerItemDidPlayToEndTimeNotification
 import platform.AVFoundation.addPeriodicTimeObserverForInterval
 import platform.AVFoundation.currentItem
-import platform.AVFoundation.currentTime
 import platform.AVFoundation.duration
 import platform.AVFoundation.pause
 import platform.AVFoundation.play
 import platform.AVFoundation.removeTimeObserver
 import platform.AVFoundation.replaceCurrentItemWithPlayerItem
 import platform.AVFoundation.seekToTime
-import platform.CoreGraphics.CGSizeMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
 import platform.CoreMedia.CMTimeMakeWithSeconds
-import platform.Foundation.NSData
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSOperationQueue
 import platform.Foundation.NSURL
-import platform.Foundation.dataWithContentsOfURL
 import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
-import platform.MediaPlayer.MPMediaItemArtwork
 import platform.MediaPlayer.MPMediaItemPropertyAlbumTitle
 import platform.MediaPlayer.MPMediaItemPropertyArtist
-import platform.MediaPlayer.MPMediaItemPropertyArtwork
 import platform.MediaPlayer.MPMediaItemPropertyPlaybackDuration
 import platform.MediaPlayer.MPMediaItemPropertyTitle
 import platform.MediaPlayer.MPNowPlayingInfoCenter
-import platform.MediaPlayer.MPNowPlayingInfoPropertyElapsedPlaybackTime
-import platform.MediaPlayer.MPNowPlayingInfoPropertyPlaybackRate
 import platform.MediaPlayer.MPRemoteCommandCenter
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusCommandFailed
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
-import platform.UIKit.UIImage
-import kotlin.time.Clock
 
-@Composable
-actual fun rememberMediaPlayer(): MediaPlayer {
-	val scope = rememberCoroutineScope()
-	val mediaPlayer = remember { IOSMediaPlayer(scope) }
-
-	DisposableEffect(Unit) {
-		onDispose {
-			mediaPlayer.cleanup()
-		}
-	}
-	return mediaPlayer
-}
-
-@OptIn(
-	ExperimentalForeignApi::class,
-	BetaInteropApi::class
-)
-class IOSMediaPlayer(
-	private val scope: CoroutineScope
-) : MediaPlayer {
-
+@OptIn(ExperimentalForeignApi::class)
+class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 	private val player = AVPlayer()
-
-	private var playlist: List<Track> = emptyList()
-	private var currentSongIndex = 0
-	private var preparedUrls: List<String> = emptyList()
-
-	private val _tracks = mutableStateOf<TrackCollection?>(null)
-	override var tracks: TrackCollection?
-		get() = _tracks.value
-		set(value) { _tracks.value = value }
-
-	private val _progress = mutableFloatStateOf(0f)
-	override val progress: State<Float> = _progress
-
-	private val _currentIndex = mutableIntStateOf(-1)
-	override val currentIndex: State<Int> = _currentIndex
-
-	private val _isPaused = mutableStateOf(false)
-	override val isPaused: State<Boolean> = _isPaused
-
 	private var timeObserver: Any? = null
+	private var preparedUrls: List<String> = emptyList()
 
 	init {
 		setupAudioSession()
@@ -159,115 +105,81 @@ class IOSMediaPlayer(
 		}
 	}
 
-	override fun play(tracks: TrackCollection, songIndex: Int) {
-		this.tracks = tracks
-		this.playlist = tracks.tracks
+	override fun play(tracks: TrackCollection, startIndex: Int) {
+		_uiState.update { it.copy(tracks = tracks, isLoading = true) }
 
-		scope.launch {
-			val urls = withContext(Dispatchers.Default) {
-				tracks.tracks.map { track ->
-					try {
-						SessionManager.api.streamUrl(track.id)
-					} catch (e: Exception) {
-						""
-					}
-				}
+		viewModelScope.launch(Dispatchers.Default) {
+			val urls = tracks.tracks.map { track ->
+				try { SessionManager.api.streamUrl(track.id) } catch (e: Exception) { "" }
 			}
 
 			withContext(Dispatchers.Main) {
 				preparedUrls = urls
-				playIndex(songIndex)
+				playIndex(startIndex)
 			}
 		}
 	}
 
 	private fun playIndex(index: Int) {
-		if (index !in playlist.indices || index !in preparedUrls.indices) return
+		val tracks = _uiState.value.tracks?.tracks ?: return
+		if (index !in tracks.indices || index !in preparedUrls.indices) return
 
-		scope.launch {
-			if (currentSongIndex != index) {
-				tracks?.tracks?.getOrNull(currentSongIndex)?.let { track ->
-					try {
-						SessionManager.api.scrobble(
-							track.id,
-							Clock.System.now()
-								.toEpochMilliseconds(),
-							submission = true
-						)
-					} catch (e: Exception) {
-						println(e)
-					}
-				}
-			}
-			tracks?.tracks?.getOrNull(index)?.let { track ->
-				try {
-					SessionManager.api.scrobble(
-						track.id,
-						Clock.System.now()
-							.toEpochMilliseconds(),
-						submission = false
-					)
-				} catch(e: Exception) {
-					println(e)
-				}
-			}
-		}
-
-		currentSongIndex = index
-		_currentIndex.intValue = index
+		handleScrobble(_uiState.value.currentIndex, index)
 
 		val urlStr = preparedUrls[index]
 		if (urlStr.isEmpty()) {
-			next()
+			if (index < tracks.size - 1) playIndex(index + 1)
 			return
 		}
 
-		val url = NSURL.URLWithString(urlStr)
-		val playerItem = AVPlayerItem(url!!)
-
+		val playerItem = AVPlayerItem(NSURL.URLWithString(urlStr)!!)
 		player.replaceCurrentItemWithPlayerItem(playerItem)
 		player.play()
 
-		_isPaused.value = false
-		updateNowPlayingInfo(playlist[index])
+		_uiState.update {
+			it.copy(
+				currentIndex = index,
+				currentTrack = tracks[index],
+				isPaused = false,
+				isLoading = false
+			)
+		}
+
+		updateNowPlayingInfo(tracks[index])
 	}
 
-	@ObjCAction
 	override fun resume() {
 		player.play()
-		_isPaused.value = false
-		updateNowPlayingInfo(playlist.getOrNull(currentSongIndex))
+		_uiState.update { it.copy(isPaused = false) }
+		updateNowPlayingInfo(_uiState.value.currentTrack)
 	}
 
-	@ObjCAction
 	override fun pause() {
 		player.pause()
-		_isPaused.value = true
-		updateNowPlayingInfo(playlist.getOrNull(currentSongIndex))
+		_uiState.update { it.copy(isPaused = true) }
+		updateNowPlayingInfo(_uiState.value.currentTrack)
 	}
 
-	@ObjCAction
 	override fun next() {
-		if (currentSongIndex + 1 < playlist.size) {
-			playIndex(currentSongIndex + 1)
+		val nextIdx = _uiState.value.currentIndex + 1
+		if (nextIdx < (_uiState.value.tracks?.tracks?.size ?: 0)) {
+			playIndex(nextIdx)
 		}
 	}
 
-	@ObjCAction
 	override fun previous() {
-		if (currentSongIndex - 1 >= 0) {
-			playIndex(currentSongIndex - 1)
+		val prevIdx = _uiState.value.currentIndex - 1
+		if (prevIdx >= 0) {
+			playIndex(prevIdx)
 		}
 	}
 
 	override fun seek(normalized: Float) {
-		val duration = player.currentItem?.duration
-		if (duration != null) {
-			val totalSeconds = CMTimeGetSeconds(duration)
-			if (!totalSeconds.isNaN()) {
-				val targetTime = totalSeconds * normalized
-				seekToTime(targetTime)
-			}
+		val duration = player.currentItem?.duration ?: return
+		val totalSeconds = CMTimeGetSeconds(duration)
+		if (!totalSeconds.isNaN()) {
+			val targetTime = CMTimeMakeWithSeconds(totalSeconds * normalized, 1000)
+			player.seekToTime(targetTime)
 		}
 	}
 
@@ -277,20 +189,19 @@ class IOSMediaPlayer(
 	}
 
 	private fun startProgressObserver() {
-		val interval = CMTimeMake(value = 1, timescale = 5)
-		timeObserver = player.addPeriodicTimeObserverForInterval(interval, queue = null) { time ->
+		val interval = CMTimeMake(1, 20)
+		timeObserver = player.addPeriodicTimeObserverForInterval(interval, null) { time ->
 			val duration = player.currentItem?.duration
 			if (duration != null) {
-				val totalSeconds = CMTimeGetSeconds(duration)
-				val currentSeconds = CMTimeGetSeconds(time)
-				if (!totalSeconds.isNaN() && totalSeconds > 0) {
-					_progress.floatValue = (currentSeconds / totalSeconds).toFloat()
+				val total = CMTimeGetSeconds(duration)
+				val current = CMTimeGetSeconds(time)
+				if (!total.isNaN() && total > 0) {
+					_uiState.update { it.copy(progress = (current / total).toFloat()) }
 				}
 			}
 		}
 	}
 
-	@OptIn(ExperimentalForeignApi::class)
 	private fun updateNowPlayingInfo(track: Track?) {
 		if (track == null) {
 			MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = null
@@ -309,27 +220,16 @@ class IOSMediaPlayer(
 				info[MPMediaItemPropertyPlaybackDuration] = seconds
 			}
 		}
-
-		info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(player.currentTime())
-		info[MPNowPlayingInfoPropertyPlaybackRate] = if (_isPaused.value) 0.0 else 1.0
-
-		info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(
-			boundsSize = CGSizeMake(512.0, 512.0),
-			requestHandler = {
-				return@MPMediaItemArtwork track.coverArt
-					?.let { SessionManager.api.getCoverArtUrl(it, auth = true) }
-					?.let { NSURL.URLWithString(it) }
-					?.let { NSData.dataWithContentsOfURL(it) }
-					?.let { UIImage(data = it) } ?: UIImage()
-			}
-		)
-
-		MPNowPlayingInfoCenter.defaultCenter().nowPlayingInfo = info
 	}
 
-	fun cleanup() {
+	override fun onCleared() {
+		super.onCleared()
 		timeObserver?.let { player.removeTimeObserver(it) }
-		timeObserver = null
 		player.replaceCurrentItemWithPlayerItem(null)
 	}
+}
+
+@Composable
+actual fun rememberMediaPlayer(): MediaPlayerViewModel {
+	return viewModel { IOSMediaPlayerViewModel() }
 }

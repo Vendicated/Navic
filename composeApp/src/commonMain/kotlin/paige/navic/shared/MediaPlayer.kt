@@ -1,23 +1,59 @@
 package paige.navic.shared
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import paige.navic.data.session.SessionManager
+import paige.subsonic.api.model.Track
 import paige.subsonic.api.model.TrackCollection
+import kotlin.time.Clock
 
-interface MediaPlayer {
-	var tracks: TrackCollection?
-	val progress: State<Float>
-	val currentIndex: State<Int>
-	val isPaused: State<Boolean>
+data class PlayerUiState(
+	val tracks: TrackCollection? = null,
+	val currentTrack: Track? = null,
+	val currentIndex: Int = -1,
+	val isPaused: Boolean = false,
+	val progress: Float = 0f,
+	val isLoading: Boolean = false
+)
 
-	fun play(tracks: TrackCollection, songIndex: Int)
-	fun pause()
-	fun resume()
-	fun seek(normalized: Float)
+abstract class MediaPlayerViewModel : ViewModel() {
+	protected val _uiState = MutableStateFlow(PlayerUiState())
+	val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
-	fun next()
-	fun previous()
+	abstract fun play(tracks: TrackCollection, startIndex: Int)
+	abstract fun pause()
+	abstract fun resume()
+	abstract fun seek(normalized: Float)
+	abstract fun next()
+	abstract fun previous()
+
+	protected fun handleScrobble(oldIndex: Int, newIndex: Int) {
+		if (oldIndex == newIndex) return
+
+		viewModelScope.launch {
+			val tracks = _uiState.value.tracks?.tracks ?: return@launch
+
+			// submission
+			tracks.getOrNull(oldIndex)?.let { track ->
+				try {
+					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = true)
+				} catch (e: Exception) { println(e) }
+			}
+
+			// now playing
+			tracks.getOrNull(newIndex)?.let { track ->
+				try {
+					SessionManager.api.scrobble(track.id, Clock.System.now().toEpochMilliseconds(), submission = false)
+				} catch (e: Exception) { println(e) }
+			}
+		}
+	}
 }
 
 @Composable
-expect fun rememberMediaPlayer(): MediaPlayer
+expect fun rememberMediaPlayer(): MediaPlayerViewModel

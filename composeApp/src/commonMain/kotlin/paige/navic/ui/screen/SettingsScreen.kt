@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.palette
 import navic.composeapp.generated.resources.settings
@@ -63,7 +64,7 @@ fun SettingsScreen() {
 
 @Composable
 private fun PageRow(
-	destination: Any,
+	destination: NavKey,
 	icon: DrawableResource,
 	title: StringResource,
 	subtitle: StringResource,

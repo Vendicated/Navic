@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kmpalette.loader.rememberNetworkLoader
 import com.kmpalette.rememberDominantColorState
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -56,6 +57,7 @@ fun MainScaffold(
 	content: @Composable () -> Unit,
 ) {
 	val player = LocalMediaPlayer.current
+	val playerState by player.uiState.collectAsStateWithLifecycle()
 	val focusManager = LocalFocusManager.current
 	val scope = rememberCoroutineScope()
 	val scaffoldState = rememberBottomSheetScaffoldState()
@@ -68,7 +70,7 @@ fun MainScaffold(
 		}
 	})
 	val dominantColorState = rememberDominantColorState(loader = networkLoader)
-	val coverArt = player.tracks?.coverArt
+	val coverArt = playerState.tracks?.coverArt
 	val scheme = if (coverArt != null && expanded) rememberDynamicColorScheme(
 		seedColor = dominantColorState.color,
 		isDark = isSystemInDarkTheme(),

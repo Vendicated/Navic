@@ -1,22 +1,17 @@
 package paige.navic.shared
 
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
-import androidx.annotation.OptIn
+import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
@@ -24,23 +19,16 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paige.navic.data.session.SessionManager
 import paige.subsonic.api.model.TrackCollection
-import kotlin.time.Clock
 
 class PlaybackService : MediaSessionService() {
 	private var mediaSession: MediaSession? = null
-
-	companion object {
-		fun newSessionToken(context: Context): SessionToken {
-			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
-		}
-	}
 
 	override fun onCreate() {
 		super.onCreate()
@@ -52,6 +40,12 @@ class PlaybackService : MediaSessionService() {
 		return mediaSession
 	}
 
+	// todo: actually handle restoring state
+	override fun onTaskRemoved(rootIntent: Intent?) {
+		onDestroy()
+		stopSelf()
+	}
+
 	override fun onDestroy() {
 		mediaSession?.run {
 			player.release()
@@ -60,74 +54,74 @@ class PlaybackService : MediaSessionService() {
 		}
 		super.onDestroy()
 	}
+
+	companion object {
+		fun newSessionToken(context: Context): SessionToken {
+			return SessionToken(context, ComponentName(context, PlaybackService::class.java))
+		}
+	}
 }
 
-@OptIn(UnstableApi::class)
-private class MediaPlayerImpl(
-	private val scope: CoroutineScope,
-	private val context: Context
-) : MediaPlayer {
-
-	private var controllerFuture: ListenableFuture<MediaController>? = null
+class AndroidMediaPlayerViewModel(
+	private val application: Application
+) : MediaPlayerViewModel() {
 	private var controller: MediaController? = null
+	private var controllerFuture: ListenableFuture<MediaController>? = null
 
-	private val _tracks = mutableStateOf<TrackCollection?>(null)
-	override var tracks: TrackCollection?
-		get() = _tracks.value
-		set(value) { _tracks.value = value }
+	init {
+		connectToService()
+	}
 
-	private val _progress = mutableFloatStateOf(0f)
-	override val progress: State<Float> = _progress
-
-	private val _currentIndex = mutableIntStateOf(-1)
-	override val currentIndex: State<Int> = _currentIndex
-
-	private val _isPaused = mutableStateOf(false)
-	override val isPaused: State<Boolean> = _isPaused
-
-	fun connect() {
-		val sessionToken = PlaybackService.newSessionToken(context)
-		controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+	private fun connectToService() {
+		val sessionToken = PlaybackService.newSessionToken(application)
+		controllerFuture = MediaController.Builder(application, sessionToken).buildAsync()
 		controllerFuture?.addListener({
 			controller = controllerFuture?.get()
-			setupPlayerListeners()
-			syncState()
+			setupController()
 		}, MoreExecutors.directExecutor())
 	}
 
-	fun disconnect() {
-		controllerFuture?.let { MediaController.releaseFuture(it) }
-		controller = null
+	private fun setupController() {
+		controller?.apply {
+			addListener(object : Player.Listener {
+				override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+					updatePlaybackState()
+				}
+
+				override fun onIsPlayingChanged(isPlaying: Boolean) {
+					_uiState.update { it.copy(isPaused = !isPlaying) }
+					if (isPlaying) startProgressLoop()
+				}
+
+				override fun onPlaybackStateChanged(playbackState: Int) {
+					_uiState.update { it.copy(isLoading = playbackState == Player.STATE_BUFFERING) }
+					updatePlaybackState()
+				}
+			})
+			updatePlaybackState()
+		}
 	}
 
-	private fun setupPlayerListeners() {
-		controller?.addListener(object : Player.Listener {
-			override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-				updateCurrentIndex()
-			}
+	private fun updatePlaybackState() {
+		controller?.let { player ->
+			val index = player.currentMediaItemIndex
+			val oldIndex = _uiState.value.currentIndex
 
-			override fun onIsPlayingChanged(isPlaying: Boolean) {
-				_isPaused.value = !isPlaying
-				if (isPlaying) startProgressLoop()
-			}
+			if (index != oldIndex) handleScrobble(oldIndex, index)
 
-			override fun onPlaybackStateChanged(playbackState: Int) {
-				updateProgress()
+			_uiState.update { state ->
+				state.copy(
+					currentIndex = index,
+					currentTrack = state.tracks?.tracks?.getOrNull(index),
+					isPaused = !player.isPlaying
+				)
 			}
-		})
-	}
-
-	private fun syncState() {
-		controller?.let {
-			_isPaused.value = !it.isPlaying
-			updateCurrentIndex()
 			updateProgress()
-			if (it.isPlaying) startProgressLoop()
 		}
 	}
 
 	private fun startProgressLoop() {
-		scope.launch {
+		viewModelScope.launch {
 			while (controller?.isPlaying == true) {
 				updateProgress()
 				delay(200)
@@ -136,53 +130,18 @@ private class MediaPlayerImpl(
 	}
 
 	private fun updateProgress() {
-		controller?.let {
-			val duration = it.duration.coerceAtLeast(1)
-			val position = it.currentPosition
-			_progress.floatValue = (position.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+		controller?.let { player ->
+			val duration = player.duration.coerceAtLeast(1)
+			val pos = player.currentPosition
+			val progress = (pos.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
+			_uiState.update { it.copy(progress = progress) }
 		}
 	}
 
-	private fun updateCurrentIndex() {
-		controller?.let {
-			val previousIdx = _currentIndex.intValue
-			val currentIdx = it.currentMediaItemIndex
-			scope.launch {
-				if (previousIdx != currentIdx) {
-					tracks?.tracks?.getOrNull(previousIdx)?.let { track ->
-						try {
-							SessionManager.api.scrobble(
-								track.id,
-								Clock.System.now()
-									.toEpochMilliseconds(),
-								submission = true
-							)
-						} catch (e: Exception) {
-							println(e)
-						}
-					}
-				}
-				tracks?.tracks?.getOrNull(currentIdx)?.let { track ->
-					try {
-						SessionManager.api.scrobble(
-							track.id,
-							Clock.System.now()
-								.toEpochMilliseconds(),
-							submission = false
-						)
-					} catch(e: Exception) {
-						println(e)
-					}
-				}
-			}
-			_currentIndex.intValue = currentIdx
-		}
-	}
+	override fun play(tracks: TrackCollection, startIndex: Int) {
+		_uiState.update { it.copy(tracks = tracks, isLoading = true) }
 
-	override fun play(tracks: TrackCollection, songIndex: Int) {
-		this.tracks = tracks
-
-		scope.launch(Dispatchers.IO) {
+		viewModelScope.launch(Dispatchers.IO) {
 			val mediaItems = tracks.tracks.map { track ->
 				val url = try {
 					SessionManager.api.streamUrl(track.id)
@@ -207,59 +166,33 @@ private class MediaPlayerImpl(
 			}
 
 			withContext(Dispatchers.Main) {
-				controller?.run {
-					setMediaItems(mediaItems, songIndex, 0L)
-					prepare()
-					play()
-				}
+				controller?.setMediaItems(mediaItems, startIndex, 0L)
+				controller?.prepare()
+				controller?.play()
 			}
 		}
 	}
 
-	override fun pause() {
-		controller?.pause()
-	}
-
-	override fun resume() {
-		controller?.play()
-	}
+	override fun pause() { controller?.pause() }
+	override fun resume() { controller?.play() }
+	override fun next() { if (controller?.hasNextMediaItem() == true) controller?.seekToNextMediaItem() }
+	override fun previous() { if (controller?.hasPreviousMediaItem() == true) controller?.seekToPreviousMediaItem() }
 
 	override fun seek(normalized: Float) {
 		controller?.let {
-			val duration = it.duration
-			if (duration > 0) {
-				it.seekTo((duration * normalized).toLong())
-				updateProgress()
-			}
+			val target = (it.duration * normalized).toLong()
+			it.seekTo(target)
 		}
 	}
 
-	override fun next() {
-		if (controller?.hasNextMediaItem() == true) {
-			controller?.seekToNextMediaItem()
-		}
-	}
-
-	override fun previous() {
-		if (controller?.hasPreviousMediaItem() == true) {
-			controller?.seekToPreviousMediaItem()
-		}
+	override fun onCleared() {
+		super.onCleared()
+		controllerFuture?.let { MediaController.releaseFuture(it) }
 	}
 }
 
 @Composable
-actual fun rememberMediaPlayer(): MediaPlayer {
-	val context = LocalContext.current
-	val scope = rememberCoroutineScope()
-
-	val mediaPlayer = remember { MediaPlayerImpl(scope, context) }
-
-	DisposableEffect(context) {
-		mediaPlayer.connect()
-		onDispose {
-			mediaPlayer.disconnect()
-		}
-	}
-
-	return mediaPlayer
+actual fun rememberMediaPlayer(): MediaPlayerViewModel {
+	val context = LocalContext.current.applicationContext as Application
+	return viewModel { AndroidMediaPlayerViewModel(context) }
 }

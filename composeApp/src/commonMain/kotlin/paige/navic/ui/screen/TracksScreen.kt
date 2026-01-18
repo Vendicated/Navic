@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,7 +50,7 @@ import navic.composeapp.generated.resources.share
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalMediaPlayer
-import paige.navic.shared.MediaPlayer
+import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
@@ -69,7 +68,7 @@ import paige.subsonic.api.model.TrackCollection
 import kotlin.time.Duration
 
 private class TracksScreenScope(
-	val player: MediaPlayer,
+	val player: MediaPlayerViewModel,
 	val tracks: TrackCollection
 )
 
@@ -82,7 +81,6 @@ fun TracksScreen(
 	}
 ) {
 	val player = LocalMediaPlayer.current
-	val haptics = LocalHapticFeedback.current
 	val scrollState = rememberScrollState()
 
 	val tracks by viewModel.tracksState.collectAsState()

@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import com.russhwolf.settings.Settings
 import dev.burnoo.compose.remembersetting.rememberBooleanSetting
 import kotlinx.serialization.json.Json
@@ -40,7 +41,7 @@ import paige.navic.ui.component.dialog.NavtabsViewModel
 import paige.navic.util.UiState
 
 private enum class NavItem(
-	val destination: Any,
+	val destination: NavKey,
 	val icon: DrawableResource,
 	val label: StringResource
 ) {

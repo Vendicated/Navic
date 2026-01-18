@@ -1,8 +1,11 @@
 package paige.subsonic.api.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Generic representation of an album or playlist.
  */
+@Serializable
 sealed interface TrackCollection {
 	val id: String
 	val title: String?
