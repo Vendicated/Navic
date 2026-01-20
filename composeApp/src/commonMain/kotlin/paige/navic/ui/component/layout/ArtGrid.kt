@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -28,6 +29,8 @@ import coil3.compose.AsyncImage
 import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.burnoo.compose.remembersetting.rememberFloatSetting
+import dev.burnoo.compose.remembersetting.rememberIntSetting
+import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
 import paige.navic.ui.component.common.ErrorBox
 import paige.navic.util.UiState
@@ -38,10 +41,14 @@ fun ArtGrid(
 	modifier: Modifier = Modifier,
 	content: LazyGridScope.() -> Unit
 ) {
-	var artGridSize by rememberFloatSetting("artGridSize", 150f)
+	val ctx = LocalCtx.current
+	var artGridItemsPerRow by rememberIntSetting("artGridItemsPerRow", 2)
+	var artGridItemSize by rememberFloatSetting("artGridItemSize", 150f)
 	LazyVerticalGrid(
 		modifier = modifier.fillMaxSize(),
-		columns = GridCells.Adaptive(artGridSize.dp),
+		columns = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
+			GridCells.Fixed(artGridItemsPerRow)
+		else GridCells.Adaptive(artGridItemSize.dp),
 		contentPadding = PaddingValues(
 			start = 16.dp,
 			top = 16.dp,
