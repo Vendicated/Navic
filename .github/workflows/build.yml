@@ -59,7 +59,7 @@ jobs:
           path: composeApp/build/outputs/apk/release/*.apk
   build-ipa:
     name: Build iOS IPA
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
