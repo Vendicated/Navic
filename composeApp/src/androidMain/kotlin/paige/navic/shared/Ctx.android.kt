@@ -31,8 +31,11 @@ actual fun rememberCtx(): Ctx {
 			override fun clickSound() {
 				view.playSoundEffect(SoundEffectConstants.CLICK)
 			}
-
 			override val name = "Android ${Build.VERSION.SDK_INT}"
+			override val appVersion: String =
+				context.packageManager
+					.getPackageInfo(context.packageName, 0)
+					.versionName.toString()
 			override val colorScheme
 				get() = if (Build.VERSION.SDK_INT >= 31)
 					if (darkTheme)

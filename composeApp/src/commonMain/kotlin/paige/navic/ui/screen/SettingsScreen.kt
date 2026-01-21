@@ -18,10 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import navic.composeapp.generated.resources.Res
+import navic.composeapp.generated.resources.info
 import navic.composeapp.generated.resources.palette
 import navic.composeapp.generated.resources.settings
+import navic.composeapp.generated.resources.subtitle_about
 import navic.composeapp.generated.resources.subtitle_appearance
 import navic.composeapp.generated.resources.subtitle_behaviour
+import navic.composeapp.generated.resources.title_about
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_behaviour
 import org.jetbrains.compose.resources.DrawableResource
@@ -30,6 +33,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalNavStack
 import paige.navic.Settings
+import paige.navic.SettingsAbout
 import paige.navic.SettingsAppearance
 import paige.navic.SettingsBehaviour
 import paige.navic.ui.component.common.Form
@@ -37,29 +41,40 @@ import paige.navic.ui.component.common.FormRow
 
 @Composable
 fun SettingsScreen() {
-	Form(
+	Column(
 		modifier = Modifier
-			.background(MaterialTheme.colorScheme.surface)
 			.verticalScroll(rememberScrollState())
 			.padding(12.dp)
 			.padding(bottom = 117.9.dp)
 	) {
-		PageRow(
-			destination = SettingsAppearance,
-			icon = Res.drawable.palette,
-			title = Res.string.title_appearance,
-			subtitle = Res.string.subtitle_appearance,
-			foregroundColor = Color(0xFF753403),
-			backgroundColor = Color(0xFFFFB683)
-		)
-		PageRow(
-			destination = SettingsBehaviour,
-			icon = Res.drawable.settings,
-			title = Res.string.title_behaviour,
-			subtitle = Res.string.subtitle_behaviour,
-			foregroundColor = Color(0xFF004D68),
-			backgroundColor = Color(0xFF67D4FF)
-		)
+		Form {
+			PageRow(
+				destination = SettingsAppearance,
+				icon = Res.drawable.palette,
+				title = Res.string.title_appearance,
+				subtitle = Res.string.subtitle_appearance,
+				foregroundColor = Color(0xFF753403),
+				backgroundColor = Color(0xFFFFB683)
+			)
+			PageRow(
+				destination = SettingsBehaviour,
+				icon = Res.drawable.settings,
+				title = Res.string.title_behaviour,
+				subtitle = Res.string.subtitle_behaviour,
+				foregroundColor = Color(0xFF004D68),
+				backgroundColor = Color(0xFF67D4FF)
+			)
+		}
+		Form {
+			PageRow(
+				destination = SettingsAbout,
+				icon = Res.drawable.info,
+				title = Res.string.title_about,
+				subtitle = Res.string.subtitle_about,
+				foregroundColor = Color(0xFF2C2C2C),
+				backgroundColor = Color(0xFFC7C7C7)
+			)
+		}
 	}
 }
 

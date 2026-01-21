@@ -46,6 +46,8 @@ import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
 import paige.navic.ui.screen.SearchScreen
+import paige.navic.ui.screen.SettingsAboutScreen
+import paige.navic.ui.screen.SettingsAcknowledgementsScreen
 import paige.navic.ui.screen.SettingsAppearanceScreen
 import paige.navic.ui.screen.SettingsBehaviourScreen
 import paige.navic.ui.screen.SettingsScreen
@@ -70,6 +72,10 @@ data object SettingsAppearance : NavKey
 @Serializable
 data object SettingsBehaviour : NavKey
 @Serializable
+data object SettingsAbout : NavKey
+@Serializable
+data object SettingsAcknowledgements : NavKey
+@Serializable
 data object Search : NavKey
 @Serializable
 data class Tracks(val partialCollection: TrackCollection) : NavKey
@@ -86,9 +92,11 @@ private val config = SavedStateConfiguration {
 			subclass(Settings::class, Settings.serializer())
 			subclass(SettingsAppearance::class, SettingsAppearance.serializer())
 			subclass(SettingsBehaviour::class, SettingsBehaviour.serializer())
+			subclass(SettingsAbout::class, SettingsAbout.serializer())
 			subclass(Search::class, Search.serializer())
 			subclass(Tracks::class, Tracks.serializer())
 			subclass(SortedAlbums::class, SortedAlbums.serializer())
+			subclass(SettingsAcknowledgements::class, SettingsAcknowledgements.serializer())
 		}
 	}
 }
@@ -172,6 +180,12 @@ fun App() {
 								}
 								entry<SettingsBehaviour>(metadata = ListDetailSceneStrategy.detailPane("settings")) {
 									SettingsBehaviourScreen()
+								}
+								entry<SettingsAbout>(metadata = ListDetailSceneStrategy.detailPane("settings")) {
+									SettingsAboutScreen()
+								}
+								entry<SettingsAcknowledgements>(metadata = ListDetailSceneStrategy.detailPane("settings")) {
+									SettingsAcknowledgementsScreen()
 								}
 								entry<Tracks>(metadata = ListDetailSceneStrategy.detailPane("root")) { key ->
 									TracksScreen(key.partialCollection)

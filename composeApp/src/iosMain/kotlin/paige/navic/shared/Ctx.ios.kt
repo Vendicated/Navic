@@ -4,11 +4,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.expressiveLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import platform.Foundation.NSBundle
 import platform.UIKit.UIDevice
 
 @OptIn(
@@ -27,6 +27,10 @@ actual fun rememberCtx(): Ctx {
 
 			override val name = (UIDevice.currentDevice.systemName()
 				+ " " + UIDevice.currentDevice.systemVersion)
+			override val appVersion: String =
+				(NSBundle.mainBundle.objectForInfoDictionaryKey(
+					"CFBundleShortVersionString"
+				) as? String).toString()
 			override val colorScheme
 				get() = if (darkTheme)
 					darkColorScheme()

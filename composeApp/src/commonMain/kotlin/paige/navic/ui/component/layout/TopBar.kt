@@ -40,6 +40,8 @@ import navic.composeapp.generated.resources.arrow_back
 import navic.composeapp.generated.resources.logout
 import navic.composeapp.generated.resources.search
 import navic.composeapp.generated.resources.settings
+import navic.composeapp.generated.resources.title_about
+import navic.composeapp.generated.resources.title_acknowledgements
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_appearance
 import navic.composeapp.generated.resources.title_artists
@@ -57,6 +59,8 @@ import paige.navic.LocalNavStack
 import paige.navic.Playlists
 import paige.navic.Search
 import paige.navic.Settings
+import paige.navic.SettingsAbout
+import paige.navic.SettingsAcknowledgements
 import paige.navic.SettingsAppearance
 import paige.navic.SettingsBehaviour
 import paige.navic.data.model.User
@@ -93,6 +97,8 @@ fun TopBar(viewModel: LoginViewModel = viewModel { LoginViewModel() }) {
 		Settings -> Res.string.title_settings
 		SettingsAppearance -> Res.string.title_appearance
 		SettingsBehaviour -> Res.string.title_behaviour
+		SettingsAbout -> Res.string.title_about
+		SettingsAcknowledgements -> Res.string.title_acknowledgements
 		else -> null
 	}
 

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 
 interface Ctx {
 	val name: String
+	val appVersion: String
 	val colorScheme: ColorScheme
 	val sizeClass: WindowSizeClass
 	fun clickSound()

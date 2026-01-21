@@ -1,0 +1,38 @@
+{
+	"name": "Navic Repository",
+	"identifier": "paige.navic.repo",
+	"website": "https://github.com/paigely/Navic",
+	"iconURL": "https://github.com/paigely/Navic/blob/master/.github/icon.png?raw=true",
+	"apps": [
+		{
+			"name": "Navic",
+			"bundleIdentifier": "paige.Navic",
+			"developerName": "Paige",
+			"localizedDescription": "Navidrome client for Android and iOS with Material 3 Expressive design ",
+			"subtitle": "Material 3 expressive Navidrome client",
+			"tintColor": "ffffff",
+			"iconURL": "https://github.com/paigely/Navic/blob/master/.github/icon.png?raw=true",
+			"versions": [
+				{
+					"version": "1.0.0-alpha07",
+					"date": "2026-01-20T09:00:32Z",
+					"size": 20529052,
+					"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha07/Navic.ipa"
+				}
+			],
+			"appPermissions": {},
+			"screenshotURLs": [
+				"https://github.com/paigely/Navic/blob/master/.github/albums.png?raw=true",
+				"https://github.com/paigely/Navic/blob/master/.github/library.png?raw=true",
+				"https://github.com/paigely/Navic/blob/master/.github/lyrics.png?raw=true",
+				"https://github.com/paigely/Navic/blob/master/.github/player.png?raw=true",
+				"https://github.com/paigely/Navic/blob/master/.github/quick-settings.png?raw=true",
+				"https://github.com/paigely/Navic/blob/master/.github/settings.png?raw=true"
+			],
+			"version": "1.0.0-alpha07",
+			"versionDate": "2026-01-20T09:00:32Z",
+			"size": 20529052,
+			"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha07/Navic.ipa"
+		}
+	]
+}

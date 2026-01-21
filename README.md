@@ -11,20 +11,21 @@ Navidrome client for Android and iOS with Material 3 Expressive design
 * Open source: features are being added and bugs are being fixed actively
 
 ## Download
-Visit [releases][RELEASES] and get the latest [`.apk`][APK_DOWNLOAD] or [`.ipa`][IPA_DOWNLOAD].
-
 [![Add to Obtainium](https://img.shields.io/badge/Add%20to%20Obtainium-black?style=for-the-badge&logo=obtainium&logoColor=%23D2BCFD&logoSize=auto)][ADD_TO_OBTAINIUM]
 [![Download APK](https://img.shields.io/badge/Download%20APK-black?style=for-the-badge&logo=android&logoColor=3DDC84&logoSize=auto)][APK_DOWNLOAD]
 [![Download IPA](https://img.shields.io/badge/Download%20ipa-black?style=for-the-badge&logo=apple&logoColor=white&logoSize=auto)][IPA_DOWNLOAD]
 
+<a href="https://stikstore.app/altdirect/?url=https://raw.githubusercontent.com/paigely/Navic/refs/heads/master/app-repo.json" target="_blank">
+	<img src="https://github.com/StikStore/altdirect/blob/main/assets/png/AltSource_Blue.png?raw=true" width="200">
+</a>
+
 ## Screenshots
 
-| Library                                     | Player                                     | Lyrics                                     | Quick settings                                     | Albums                                     | Settings                                     |
-|---------------------------------------------|--------------------------------------------|--------------------------------------------|----------------------------------------------------|--------------------------------------------|----------------------------------------------|
-| <img src=".github/library.png" width="200"> | <img src=".github/player.png" width="200"> | <img src=".github/lyrics.png" width="200"> | <img src=".github/quick-settings.png" width="200"> | <img src=".github/albums.png" width="200"> | <img src=".github/settings.png" width="200"> |
+|         Library          |         Player          |         Lyrics          |         Quick settings          |         Albums          |         Settings          |
+|:------------------------:|:-----------------------:|:-----------------------:|:-------------------------------:|:-----------------------:|:-------------------------:|
+| ![](.github/library.png) | ![](.github/player.png) | ![](.github/lyrics.png) | ![](.github/quick-settings.png) | ![](.github/albums.png) | ![](.github/settings.png) |
 
 ## Star History
-
 <a href="https://star-history.com/#paigely/Navic&Date">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=paigely/Navic&type=Date&theme=dark" />
@@ -33,11 +34,15 @@ Visit [releases][RELEASES] and get the latest [`.apk`][APK_DOWNLOAD] or [`.ipa`]
  </picture>
 </a>
 
-
 ## Contributing
 Don't use AI please, it wastes my time and I will close your PR if you do
 
-[RELEASES]: https://github.com/paigely/Navic/releases
+## Acknowledgements
+This project uses a heavily altered version
+of [siper/subsonic-api](https://github.com/siper/subsonic-api)
+which is under the MIT licence. Other acknowledgements may be found inside the app, under
+Settings > About > Acknowledgements, as there are too many to list here.
+
 [ADD_TO_OBTAINIUM]: https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22paige.navic%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Fpaigely%2FNavic%22%2C%22author%22%3A%22paigely%22%2C%22name%22%3A%22Navic%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22sortMethodChoice%5C%22%3A%5C%22date%5C%22%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22releaseTitleAsVersion%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22appAuthor%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22%5C%22%2C%5C%22refreshBeforeDownload%5C%22%3Afalse%7D%22%2C%22overrideSource%22%3Anull%7D "Add to Obtainium"
 [APK_DOWNLOAD]: https://github.com/paigely/Navic/releases/latest/download/Navic.apk "Download APK"
 [IPA_DOWNLOAD]: https://github.com/paigely/Navic/releases/latest/download/Navic.ipa "Download IPA"
