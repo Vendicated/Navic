@@ -14,10 +14,10 @@
 			"iconURL": "https://github.com/paigely/Navic/blob/master/.github/icon.png?raw=true",
 			"versions": [
 				{
-					"version": "1.0.0-alpha07",
-					"date": "2026-01-20T09:00:32Z",
-					"size": 20529052,
-					"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha07/Navic.ipa"
+					"version": "1.0.0-alpha08",
+					"date": "2026-01-21T02:22:50Z",
+					"size": 20341102,
+					"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha08/Navic.ipa"
 				}
 			],
 			"appPermissions": {},
@@ -29,10 +29,10 @@
 				"https://github.com/paigely/Navic/blob/master/.github/quick-settings.png?raw=true",
 				"https://github.com/paigely/Navic/blob/master/.github/settings.png?raw=true"
 			],
-			"version": "1.0.0-alpha07",
-			"versionDate": "2026-01-20T09:00:32Z",
-			"size": 20529052,
-			"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha07/Navic.ipa"
+			"version": "1.0.0-alpha08",
+			"versionDate": "2026-01-21T02:22:50Z",
+			"size": 20341102,
+			"downloadURL": "https://github.com/paigely/Navic/releases/download/1.0.0-alpha08/Navic.ipa"
 		}
 	]
 }
