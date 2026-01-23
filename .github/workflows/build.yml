@@ -40,7 +40,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Build with Gradle
+      - name: Build with Gradle (release)
+        if: ${{ github.event_name == 'push' }}
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -52,11 +53,17 @@ jobs:
           ./gradlew :composeApp:packageRelease --stacktrace
           rm release.keystore
 
+      - name: Build with Gradle (debug)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          ./gradlew :composeApp:assembleDebug --stacktrace
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v6
         with:
           name: navic-release-android
-          path: composeApp/build/outputs/apk/release/*.apk
+          path: composeApp/build/outputs/apk/**/*.apk
+          compression-level: 0
   build-ipa:
     name: Build iOS IPA
     runs-on: macos-26
