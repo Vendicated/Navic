@@ -34,6 +34,9 @@ import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import paige.navic.LocalCtx
+import paige.navic.LocalNavStack
+import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
 import paige.navic.ui.component.common.ErrorBox
@@ -144,12 +147,17 @@ fun ArtistsScreenItem(
 	artist: Artist,
 	viewModel: ArtistsViewModel
 ) {
+	val ctx = LocalCtx.current
+	val backStack = LocalNavStack.current
 	val selection by viewModel.selectedArtist.collectAsState()
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
 			imageModifier = Modifier.combinedClickable(
-				onClick = {},
+				onClick = {
+					ctx.clickSound()
+					backStack.add(Screen.Artist(artist.id))
+				},
 				onLongClick = { viewModel.selectArtist(artist) }
 			),
 			imageUrl = artist.coverArt,

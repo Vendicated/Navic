@@ -100,7 +100,11 @@ fun AlbumsScreen(
 			onRefresh = { viewModel.refreshAlbums() }
 		) { topPadding ->
 			AnimatedContent(albumsState, Modifier.padding(top = topPadding)) {
-				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
+				ArtGrid(
+					modifier = if (!nested)
+						Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+					else Modifier
+				) {
 					when (it) {
 						is UiState.Loading -> artGridPlaceholder()
 						is UiState.Error -> artGridError(it)

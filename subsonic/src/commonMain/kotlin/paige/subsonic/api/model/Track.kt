@@ -16,6 +16,7 @@ sealed interface TrackCollection {
 	val genre: String?
 	val trackCount: Int
 	val tracks: List<Track>
+	val artistId: String?
 }
 
 /**

@@ -30,6 +30,7 @@ import paige.subsonic.api.model.SongResponse
 import paige.subsonic.api.model.Starred2Response
 import paige.subsonic.api.model.StarredResponse
 import paige.subsonic.api.model.SubsonicResponse
+import paige.subsonic.api.model.TopSongsResponse
 import paige.subsonic.api.model.UserResponse
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -106,6 +107,18 @@ class SubsonicApi(
 				parameter("musicFolderId", musicFolderId)
 			}
 			.body<SubsonicResponse<RandomSongsResponse>>()
+	}
+
+	suspend fun getTopSongs(
+		artist: String? = null,
+		count: Int? = null
+	): SubsonicResponse<TopSongsResponse> {
+		return client
+			.get("rest/getTopSongs") {
+				parameter("artist", artist)
+				parameter("count", count)
+			}
+			.body<SubsonicResponse<TopSongsResponse>>()
 	}
 
 	suspend fun getArtist(id: String): SubsonicResponse<ArtistResponse> {

@@ -2,6 +2,7 @@ package paige.navic.ui.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,8 @@ import navic.composeapp.generated.resources.unstar
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import paige.navic.LocalMediaPlayer
+import paige.navic.LocalNavStack
+import paige.navic.data.model.Screen
 import paige.navic.shared.MediaPlayerViewModel
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.DropdownItem
@@ -203,6 +206,7 @@ fun TracksScreen(
 
 @Composable
 private fun TracksScreenScope.Metadata() {
+	val backStack = LocalNavStack.current
 	var artGridRounding by rememberFloatSetting("artGridRounding", 16f)
 	AsyncImage(
 		model = tracks.coverArt,
@@ -229,7 +233,12 @@ private fun TracksScreenScope.Metadata() {
 		)
 		Text(
 			tracks.subtitle ?: stringResource(Res.string.info_unknown_artist),
-			color = MaterialTheme.colorScheme.primary
+			color = MaterialTheme.colorScheme.primary,
+			modifier = Modifier.clickable {
+				tracks.artistId?.let { id ->
+					backStack.add(Screen.Artist(id))
+				}
+			}
 		)
 		Text(
 			"${tracks.genre ?: "Unknown genre"} • ${tracks.year ?: "Unknown year"}",

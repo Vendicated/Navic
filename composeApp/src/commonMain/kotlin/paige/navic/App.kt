@@ -39,6 +39,7 @@ import paige.navic.shared.rememberMediaPlayer
 import paige.navic.ui.component.layout.BottomBar
 import paige.navic.ui.component.layout.MainScaffold
 import paige.navic.ui.screen.AlbumsScreen
+import paige.navic.ui.screen.ArtistScreen
 import paige.navic.ui.screen.ArtistsScreen
 import paige.navic.ui.screen.LibraryScreen
 import paige.navic.ui.screen.PlaylistsScreen
@@ -64,6 +65,7 @@ private val config = SavedStateConfiguration {
 
 			// misc
 			subclass(Screen.Tracks::class, Screen.Tracks.serializer())
+			subclass(Screen.Artist::class, Screen.Artist.serializer())
 
 			// settings
 			subclass(Screen.Settings.Root::class, Screen.Settings.Root.serializer())
@@ -158,6 +160,9 @@ private fun entryProvider(
 		// misc
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
 			TracksScreen(key.partialCollection)
+		}
+		entry<Screen.Artist>(metadata = detailPane("root")) { key ->
+			ArtistScreen(key.artist)
 		}
 
 		// settings

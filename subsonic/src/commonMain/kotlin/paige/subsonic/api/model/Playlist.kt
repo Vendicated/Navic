@@ -37,6 +37,7 @@ data class Playlist(
 	override val trackCount: Int = songCount
 	override val genre: String? = null
 	override val year: Int? = null
+	override val artistId: String? = null
 }
 
 @Serializable
