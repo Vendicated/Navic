@@ -81,30 +81,30 @@ fun RefreshBox(
 		state = state,
 		modifier = modifier,
 		indicator = {
-			Popup(
-				alignment = Alignment.TopCenter,
-				offset = with(density) {
-					IntOffset(
+			if (state.distanceFraction > 0.01f) {
+				Popup(
+					alignment = Alignment.TopCenter,
+					offset = IntOffset(
 						x = 0,
 						y = offset
-					)
-				},
-				properties = PopupProperties(clippingEnabled = false)
-			) {
-				Box(
-					Modifier
-						.padding(vertical = 24.dp * (state.distanceFraction * 2f))
-						.align(Alignment.TopCenter)
-						.graphicsLayer {
-							scaleX = scaleFraction()
-							scaleY = scaleFraction()
-							clip = false
-						}
+					),
+					properties = PopupProperties(clippingEnabled = false)
 				) {
-					PullToRefreshDefaults.LoadingIndicator(
-						state = state,
-						isRefreshing = isRefreshing
-					)
+					Box(
+						Modifier
+							.padding(vertical = 24.dp * (state.distanceFraction * 2f))
+							.align(Alignment.TopCenter)
+							.graphicsLayer {
+								scaleX = scaleFraction()
+								scaleY = scaleFraction()
+								clip = false
+							}
+					) {
+						PullToRefreshDefaults.LoadingIndicator(
+							state = state,
+							isRefreshing = isRefreshing
+						)
+					}
 				}
 			}
 		}

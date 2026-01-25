@@ -80,8 +80,8 @@ fun RootTopBar(
 				loginState = loginState,
 				onSearch = {
 					canExpandSearch = true
-					scope.launch { searchBarState.animateToExpanded()}
-						   },
+					scope.launch { searchBarState.animateToExpanded() }
+				},
 				onLogOut = { viewModel.logout() },
 				onSetShowLogin = { showLogin = it }
 			)
