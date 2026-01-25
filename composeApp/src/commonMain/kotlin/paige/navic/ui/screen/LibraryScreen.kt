@@ -116,9 +116,7 @@ fun LibraryScreen(
 				modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 				columns = GridCells.Fixed(2),
 				contentPadding = PaddingValues(
-					start = 16.dp,
 					top = topPadding + 16.dp,
-					end = 16.dp,
 					bottom = 200.dp,
 				),
 				verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -127,22 +125,26 @@ fun LibraryScreen(
 				overviewButton(
 					icon = Res.drawable.library_add,
 					label = Res.string.option_sort_newest,
-					destination = Screen.Albums(true, ListType.NEWEST)
+					destination = Screen.Albums(true, ListType.NEWEST),
+					start = true
 				)
 				overviewButton(
 					icon = Res.drawable.shuffle,
 					label = Res.string.option_sort_random,
-					destination = Screen.Albums(true, ListType.RANDOM)
+					destination = Screen.Albums(true, ListType.RANDOM),
+					start = false
 				)
 				overviewButton(
 					icon = Res.drawable.unstar,
 					label = Res.string.option_sort_starred,
-					destination = Screen.Albums(true, ListType.STARRED)
+					destination = Screen.Albums(true, ListType.STARRED),
+					start = true
 				)
 				overviewButton(
 					icon = Res.drawable.history,
 					label = Res.string.option_sort_frequent,
-					destination = Screen.Albums(true, ListType.FREQUENT)
+					destination = Screen.Albums(true, ListType.FREQUENT),
+					start = false
 				)
 				if (!isLoggedIn) {
 					item(span = { GridItemSpan(maxLineSpan) }) {
@@ -187,7 +189,7 @@ private fun LazyGridScope.header(
 			stringResource(title, formatArgs),
 			style = MaterialTheme.typography.titleMediumEmphasized,
 			fontWeight = FontWeight(600),
-			modifier = Modifier.height(32.dp).padding(top = 8.dp)
+			modifier = Modifier.height(32.dp).padding(top = 8.dp, start = 16.dp)
 		)
 	}
 	item(span = { GridItemSpan(1) }) {
@@ -200,7 +202,7 @@ private fun LazyGridScope.header(
 			textAlign = TextAlign.Right,
 			modifier = Modifier
 				.height(32.dp)
-				.padding(top = 8.dp)
+				.padding(top = 8.dp, end = 16.dp)
 				.clickable(
 					interactionSource = null,
 					indication = null
@@ -216,13 +218,20 @@ private fun LazyGridScope.header(
 private fun LazyGridScope.overviewButton(
 	icon: DrawableResource,
 	label: StringResource,
-	destination: NavKey
+	destination: NavKey,
+	start: Boolean
 ) {
 	item(span = { GridItemSpan(1) }) {
 		val ctx = LocalCtx.current
 		val backStack = LocalNavStack.current
 		Button(
-			modifier = Modifier.fillMaxWidth().height(42.dp),
+			modifier = Modifier
+				.fillMaxWidth()
+				.height(42.dp)
+				.padding(
+					start = if (start) 16.dp else 0.dp,
+					end = if (!start) 16.dp else 0.dp,
+				),
 			contentPadding = PaddingValues(horizontal = 12.dp),
 			elevation = null,
 			shapes = ButtonDefaults.shapes(
@@ -273,7 +282,8 @@ private fun LazyGridScope.horizontalAlbums(
 				modifier = Modifier.animateContentSize(
 					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
 				),
-				horizontalArrangement = Arrangement.spacedBy(12.dp)
+				horizontalArrangement = Arrangement.spacedBy(12.dp),
+				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
 				if (state is UiState.Loading) {
 					items(8) {
@@ -315,7 +325,8 @@ private fun LazyGridScope.horizontalPlaylists(
 				modifier = Modifier.animateContentSize(
 					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
 				),
-				horizontalArrangement = Arrangement.spacedBy(12.dp)
+				horizontalArrangement = Arrangement.spacedBy(12.dp),
+				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
 				if (state is UiState.Loading) {
 					items(8) {
@@ -356,7 +367,8 @@ private fun LazyGridScope.horizontalArtists(
 				modifier = Modifier.animateContentSize(
 					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
 				),
-				horizontalArrangement = Arrangement.spacedBy(12.dp)
+				horizontalArrangement = Arrangement.spacedBy(12.dp),
+				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
 				if (state is UiState.Loading) {
 					items(8) {
