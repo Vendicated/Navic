@@ -66,6 +66,7 @@ import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.data.session.SessionManager
+import paige.navic.shared.systemGesturesExclusion
 import paige.navic.ui.component.common.RefreshBox
 import paige.navic.ui.component.dialog.DeletionDialog
 import paige.navic.ui.component.dialog.DeletionEndpoint
@@ -279,9 +280,11 @@ private fun LazyGridScope.horizontalAlbums(
 			span = { GridItemSpan(maxLineSpan) }
 		) {
 			LazyRow(
-				modifier = Modifier.animateContentSize(
-					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-				),
+				modifier = Modifier
+					.animateContentSize(
+						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+					)
+					.systemGesturesExclusion(),
 				horizontalArrangement = Arrangement.spacedBy(12.dp),
 				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
@@ -322,9 +325,11 @@ private fun LazyGridScope.horizontalPlaylists(
 			span = { GridItemSpan(maxLineSpan) }
 		) {
 			LazyRow(
-				modifier = Modifier.animateContentSize(
-					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-				),
+				modifier = Modifier
+					.animateContentSize(
+						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+					)
+					.systemGesturesExclusion(),
 				horizontalArrangement = Arrangement.spacedBy(12.dp),
 				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
@@ -364,9 +369,11 @@ private fun LazyGridScope.horizontalArtists(
 			span = { GridItemSpan(maxLineSpan) }
 		) {
 			LazyRow(
-				modifier = Modifier.animateContentSize(
-					animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
-				),
+				modifier = Modifier
+					.animateContentSize(
+						animationSpec = MaterialTheme.motionScheme.fastSpatialSpec()
+					)
+					.systemGesturesExclusion(),
 				horizontalArrangement = Arrangement.spacedBy(12.dp),
 				contentPadding = PaddingValues(horizontal = 16.dp)
 			) {
