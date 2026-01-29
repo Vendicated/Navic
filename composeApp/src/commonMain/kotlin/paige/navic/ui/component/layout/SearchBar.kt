@@ -39,7 +39,6 @@ import navic.composeapp.generated.resources.title_artists
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import paige.navic.LocalCtx
 import paige.navic.LocalNavStack
 import paige.navic.data.model.Screen
 import paige.navic.ui.component.common.ErrorBox
@@ -58,7 +57,6 @@ fun SearchBar(
 	enabled: Boolean
 ) {
 	if (!enabled) return
-	val ctx = LocalCtx.current
 	val backStack = LocalNavStack.current
 	val state by viewModel.searchState.collectAsState()
 	val scope = rememberCoroutineScope()
@@ -151,12 +149,7 @@ fun SearchBar(
 									.padding(horizontal = 20.dp)
 							)
 							tracks.forEach { track ->
-								TrackRow(track = track) {
-									scope.launch {
-										searchBarState.animateToCollapsed()
-										viewModel.searchQuery.clearText()
-									}
-								}
+								TrackRow(track = track)
 							}
 						}
 					}
