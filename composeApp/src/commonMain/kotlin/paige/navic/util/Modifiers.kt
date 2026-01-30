@@ -13,6 +13,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.isSecondaryPressed
+import androidx.compose.ui.input.pointer.pointerInput
 
 @Composable
 fun Modifier.shimmerLoading(
@@ -45,5 +47,21 @@ fun Modifier.shimmerLoading(
 				end = Offset(x = translateAnimation + 200f, y = translateAnimation + 200f),
 			)
 		)
+	}
+}
+
+@Composable
+fun Modifier.onRightClick(
+	callback: () -> Unit
+): Modifier {
+	return this.pointerInput(Unit) {
+		awaitPointerEventScope {
+			while (true) {
+				val event = awaitPointerEvent()
+				if (event.buttons.isSecondaryPressed) {
+					callback()
+				}
+			}
+		}
 	}
 }

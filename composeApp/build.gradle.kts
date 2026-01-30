@@ -1,3 +1,4 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -33,6 +34,12 @@ kotlin {
 		binaries.framework {
 			baseName = "ComposeApp"
 			isStatic = true
+		}
+	}
+
+	jvm {
+		compilerOptions {
+			jvmTarget.set(JvmTarget.JVM_17)
 		}
 	}
 
@@ -80,6 +87,11 @@ kotlin {
 			implementation(
 				libs.ktor.client.darwin
 			)
+		}
+		jvmMain.dependencies {
+			implementation(compose.desktop.currentOs)
+			implementation(libs.kotlinx.coroutinesSwing)
+			implementation(libs.ktor.client.okhttp)
 		}
 	}
 
@@ -162,5 +174,16 @@ android {
 	compileOptions {
 		sourceCompatibility = JavaVersion.VERSION_17
 		targetCompatibility = JavaVersion.VERSION_17
+	}
+}
+
+compose.desktop {
+	application {
+		mainClass = "paige.Navic.MainKt"
+		nativeDistributions {
+			targetFormats(TargetFormat.Msi, TargetFormat.Dmg, TargetFormat.AppImage)
+			packageName = "paige.Navic"
+			linux.iconFile = project.file("../.github/icon.png")
+		}
 	}
 }

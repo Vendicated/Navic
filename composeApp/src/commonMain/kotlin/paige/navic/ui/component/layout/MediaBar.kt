@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -203,7 +204,6 @@ fun MediaBar(progress: Float) {
 		) {
 			if (expandedAlpha > 0f) {
 				scope.ExpandedContent(
-					progress = progress,
 					artSize = artEndSize,
 					topPadding = 100.dp,
 					showArt = isFullyExpanded
@@ -264,7 +264,7 @@ private fun MediaBarScope.CollapsedContent() {
 
 			Info(modifier = Modifier.weight(1f))
 
-			Controls(expanded = false, progress = 0f)
+			Controls(expanded = false)
 		}
 		if (alwaysShowSeekbar) {
 			ProgressBar(expanded = false)
@@ -275,7 +275,6 @@ private fun MediaBarScope.CollapsedContent() {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.ExpandedContent(
-	progress: Float,
 	artSize: Dp,
 	topPadding: Dp,
 	showArt: Boolean
@@ -290,7 +289,7 @@ private fun MediaBarScope.ExpandedContent(
 			modifier = Modifier.fillMaxSize()
 		) { page ->
 			when (page) {
-				0 -> PlayerView(progress, artSize, topPadding, showArt)
+				0 -> PlayerView(artSize, topPadding, showArt)
 				1 -> LyricsScreen(currentTrack)
 			}
 		}
@@ -324,7 +323,6 @@ private fun MediaBarScope.ExpandedContent(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaBarScope.PlayerView(
-	progress: Float,
 	artSize: Dp,
 	topPadding: Dp,
 	showArt: Boolean
@@ -350,8 +348,9 @@ private fun MediaBarScope.PlayerView(
 
 		Column(
 			Modifier
+				.widthIn(max = 500.dp)
 				.padding(horizontal = 15.dp)
-				.padding(top = 24.dp)
+				.padding(top = 54.dp)
 		) {
 			Row(
 				Modifier.padding(horizontal = 15.dp),
@@ -362,7 +361,7 @@ private fun MediaBarScope.PlayerView(
 					IconButton(onClick = { moreShown = true }) {
 						Icon(
 							vectorResource(Res.drawable.more_vert),
-							contentDescription = stringResource(Res.string.action_more)
+							stringResource(Res.string.action_more)
 						)
 					}
 					Dropdown(
@@ -393,12 +392,11 @@ private fun MediaBarScope.PlayerView(
 					}
 				}
 			}
-			Spacer(Modifier.height(30.dp))
 			ProgressBar(expanded = true)
 		}
 
 		Spacer(Modifier.height(30.dp))
-		Controls(expanded = true, progress = progress)
+		Controls(expanded = true)
 	}
 }
 
@@ -446,7 +444,7 @@ private fun MediaBarScope.Info(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaBarScope.Controls(expanded: Boolean, progress: Float) {
+private fun MediaBarScope.Controls(expanded: Boolean) {
 	val paused = playerState.isPaused
 	val size = if(expanded) 40.dp else 32.dp
 

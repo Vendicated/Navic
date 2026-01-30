@@ -51,6 +51,7 @@ multiplatformSettings-noArg = { module = "com.russhwolf:multiplatform-settings-n
 reorderable = { module = "sh.calvin.reorderable:reorderable", version = "3.0.0" }
 aboutLibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutLibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version = "1.10.2" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

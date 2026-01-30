@@ -46,6 +46,7 @@ import paige.navic.ui.component.layout.artGridError
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.PlaylistsViewModel
 import paige.navic.util.UiState
+import paige.navic.util.onRightClick
 import paige.subsonic.api.model.Playlist
 import kotlin.time.Duration
 
@@ -130,15 +131,19 @@ fun PlaylistsScreenItem(
 	val selection by viewModel.selectedPlaylist.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier.combinedClickable(
-				onClick = {
-					ctx.clickSound()
-					backStack.add(Screen.Tracks(playlist))
-				},
-				onLongClick = {
+			imageModifier = Modifier
+				.combinedClickable(
+					onClick = {
+						ctx.clickSound()
+						backStack.add(Screen.Tracks(playlist))
+					},
+					onLongClick = {
+						viewModel.selectPlaylist(playlist)
+					}
+				)
+				.onRightClick {
 					viewModel.selectPlaylist(playlist)
-				}
-			),
+				},
 			imageUrl = playlist.coverArt,
 			title = playlist.name,
 			subtitle = buildString {

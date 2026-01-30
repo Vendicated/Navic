@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.minus
@@ -52,7 +53,7 @@ import paige.navic.ui.theme.NavicTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold(
+fun ColumnScope.MainScaffold(
 	snackbarState: SnackbarHostState,
 	bottomBar: @Composable () -> Unit,
 	content: @Composable () -> Unit,
@@ -90,6 +91,7 @@ fun MainScaffold(
 	}
 
 	Scaffold(
+		modifier = Modifier.weight(1f),
 		snackbarHost = {
 			NavicTheme {
 				SnackbarHost(

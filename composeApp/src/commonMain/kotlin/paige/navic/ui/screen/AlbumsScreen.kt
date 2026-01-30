@@ -69,6 +69,7 @@ import paige.navic.ui.component.layout.artGridError
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.AlbumsViewModel
 import paige.navic.util.UiState
+import paige.navic.util.onRightClick
 import paige.subsonic.api.model.Album
 import paige.subsonic.api.model.ListType
 import kotlin.time.Duration
@@ -240,15 +241,19 @@ fun AlbumsScreenItem(
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier.combinedClickable(
-				onClick = {
-					ctx.clickSound()
-					backStack.add(Screen.Tracks(album))
-				},
-				onLongClick = {
+			imageModifier = Modifier
+				.combinedClickable(
+					onClick = {
+						ctx.clickSound()
+						backStack.add(Screen.Tracks(album))
+					},
+					onLongClick = {
+						viewModel.selectAlbum(album)
+					}
+				)
+				.onRightClick {
 					viewModel.selectAlbum(album)
-				}
-			),
+				},
 			imageUrl = album.coverArt,
 			title = album.name
 				?: stringResource(Res.string.info_unknown_album),

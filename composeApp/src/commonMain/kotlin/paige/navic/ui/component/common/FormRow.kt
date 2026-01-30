@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
+import paige.navic.util.onRightClick
 
 @Composable
 fun FormRow(
@@ -34,13 +35,19 @@ fun FormRow(
 		modifier = modifier
 			.fillMaxWidth()
 			.then(
-				if (onClick != null) Modifier.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						onClick()
-					},
-					onLongClick = onLongClick
-				) else Modifier
+				if (onClick != null)
+					Modifier
+						.combinedClickable(
+							onClick = {
+								ctx.clickSound()
+								onClick()
+							},
+							onLongClick = onLongClick
+						)
+						.onRightClick {
+							onLongClick?.invoke()
+						}
+				else Modifier
 			),
 		color = color ?: MaterialTheme.colorScheme.surfaceContainer,
 		shape = ContinuousRoundedRectangle(rounding)

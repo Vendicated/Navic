@@ -3,14 +3,10 @@ package paige.navic.ui.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +45,7 @@ import paige.navic.ui.component.layout.RootTopBar
 import paige.navic.ui.component.layout.artGridPlaceholder
 import paige.navic.ui.viewmodel.ArtistsViewModel
 import paige.navic.util.UiState
+import paige.navic.util.onRightClick
 import paige.subsonic.api.model.Artist
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -149,13 +146,17 @@ fun ArtistsScreenItem(
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier.combinedClickable(
-				onClick = {
-					ctx.clickSound()
-					backStack.add(Screen.Artist(artist.id))
+			imageModifier = Modifier
+				.combinedClickable(
+					onClick = {
+						ctx.clickSound()
+						backStack.add(Screen.Artist(artist.id))
+					},
+					onLongClick = { viewModel.selectArtist(artist) }
+				)
+				.onRightClick {
+					viewModel.selectArtist(artist)
 				},
-				onLongClick = { viewModel.selectArtist(artist) }
-			),
 			imageUrl = artist.coverArt,
 			title = artist.name,
 			subtitle = pluralStringResource(

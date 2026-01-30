@@ -44,7 +44,7 @@ fun Dropdown(
 	) {
         Form(
             rounding = 20.dp,
-            spacing = 2.5.dp
+            spacing = 1.5.dp
         ) {
             content()
         }
@@ -74,7 +74,7 @@ fun DropdownItem(
 	FormRow(
 		color = containerColor,
 		rounding = rounding,
-		contentPadding = PaddingValues(2.dp)
+		contentPadding = PaddingValues(0.dp)
 	) {
 		DropdownMenuItem(
 			text = {
@@ -103,7 +103,7 @@ fun DropdownItem(
 					)
 				}
 			},
-			contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp),
+			contentPadding = PaddingValues(horizontal = 16.dp, vertical = 2.dp),
 			enabled = enabled
 		)
 	}

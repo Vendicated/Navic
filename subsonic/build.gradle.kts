@@ -21,6 +21,11 @@ kotlin {
 		}
 	}
 	iosArm64()
+	jvm {
+		compilerOptions {
+			jvmTarget = JvmTarget.JVM_17
+		}
+	}
 
 	sourceSets {
 		commonMain.dependencies {
@@ -34,6 +39,9 @@ kotlin {
 		}
 		iosMain.dependencies {
 			implementation(libs.ktor.client.darwin)
+		}
+		jvmMain.dependencies {
+			implementation(libs.ktor.client.okhttp)
 		}
 	}
 }
