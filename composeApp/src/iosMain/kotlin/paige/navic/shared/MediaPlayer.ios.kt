@@ -215,15 +215,15 @@ class IOSMediaPlayerViewModel : MediaPlayerViewModel() {
 	}
 
 	override fun toggleShuffle() {
-		TODO("Not yet implemented")
+		// todo: Not yet implemented
 	}
 
 	override fun toggleRepeat() {
-		TODO("Not yet implemented")
+		// todo: Not yet implemented
 	}
 
 	override fun shufflePlay(tracks: TrackCollection) {
-		TODO("Not yet implemented")
+		// todo: Not yet implemented
 	}
 
 	override fun seek(normalized: Float) {
