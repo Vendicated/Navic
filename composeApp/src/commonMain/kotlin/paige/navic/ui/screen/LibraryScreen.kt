@@ -155,16 +155,17 @@ fun LibraryScreen(
 					destination = Screen.Albums(true, ListType.FREQUENT),
 					start = false
 				)
-				if (!isLoggedIn) {
+				if (isLoggedIn) {
 					item(span = { GridItemSpan(maxLineSpan) }) {
 						Text(
 							stringResource(Res.string.info_needs_log_in),
-							color = MaterialTheme.colorScheme.onSurfaceVariant
+							color = MaterialTheme.colorScheme.onSurfaceVariant,
+							modifier = Modifier.padding(horizontal = 16.dp)
 						)
 					}
 					return@LazyVerticalGrid
 				}
-				horizontalAlbums(recentsState, albumsViewModel, { shareId = it })
+				horizontalAlbums(recentsState, albumsViewModel) { shareId = it }
 				horizontalPlaylists(playlistsState, playlistsViewModel, { shareId = it }, { deletionId = it })
 				horizontalArtists(artistsState, artistsViewModel)
 			}
