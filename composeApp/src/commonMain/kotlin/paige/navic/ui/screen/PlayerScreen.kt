@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -395,7 +396,12 @@ fun PlayerScreen(
 				.fillMaxSize(),
 			horizontalAlignment = Alignment.CenterHorizontally
 		) {
-			Box(contentAlignment = Alignment.Center) {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.weight(1f)
+					.fillMaxWidth()
+			) {
 				AsyncImage(
 					model = coverUri,
 					contentDescription = null,
@@ -403,7 +409,6 @@ fun PlayerScreen(
 					modifier = Modifier
 						.aspectRatio(1f)
 						.padding(imagePadding)
-						.fillMaxSize()
 						.clip(ContinuousRoundedRectangle(16.dp))
 						.background(MaterialTheme.colorScheme.onSurface.copy(alpha = .1f))
 				)
@@ -419,11 +424,11 @@ fun PlayerScreen(
 			infoRow()
 			progressBar()
 			durationsRow()
-			Spacer(modifier = Modifier.weight(0.5f))
+			Spacer(modifier = Modifier.height(24.dp))
 			controlsRow()
-			Spacer(modifier = Modifier.weight(1f))
+			Spacer(modifier = Modifier.height(24.dp))
 			toolBar()
-			Spacer(modifier = Modifier.weight(1f))
+			Spacer(modifier = Modifier.height(16.dp))
 		}
 	}
 }

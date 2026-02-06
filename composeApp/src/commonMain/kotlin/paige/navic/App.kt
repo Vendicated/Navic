@@ -33,6 +33,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -211,7 +212,7 @@ private fun entryProvider(
 		}
 
 		// misc
-		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
+		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet(maxWidth = Dp.Unspecified)) {
 			PlayerScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
