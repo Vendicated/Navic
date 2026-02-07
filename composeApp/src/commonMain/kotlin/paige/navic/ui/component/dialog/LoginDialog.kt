@@ -141,16 +141,7 @@ fun LoginDialog(
 					keyboardOptions = KeyboardOptions(
 						autoCorrectEnabled = false,
 						keyboardType = KeyboardType.Uri
-					),
-					isError = viewModel.instanceError != null,
-					supportingText = {
-						viewModel.instanceError?.let { errorMsg ->
-							Text(
-								text = errorMsg,
-								color = MaterialTheme.colorScheme.error
-							)
-						}
-					}
+					)
 				)
 				Spacer(Modifier.height(8.dp))
 				OutlinedTextField(

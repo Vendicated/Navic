@@ -1,10 +1,6 @@
 package paige.navic.ui.viewmodel
 
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,23 +15,12 @@ class LoginViewModel : ViewModel() {
 	private val _loginState = MutableStateFlow<LoginState<User?>>(LoginState.LoggedOut)
 	val loginState: StateFlow<LoginState<User?>> = _loginState.asStateFlow()
 
-	var instanceError by mutableStateOf<String?>(null)
-		private set
-
 	val instanceState = TextFieldState()
 	val usernameState = TextFieldState()
 	val passwordState = TextFieldState()
 
 	init {
 		loadUser()
-		viewModelScope.launch {
-			snapshotFlow { instanceState.text }
-				.collect {
-					if (instanceError != null) {
-						instanceError = null
-					}
-				}
-		}
 	}
 
 	fun loadUser() {
@@ -50,23 +35,11 @@ class LoginViewModel : ViewModel() {
 	}
 
 	fun login() {
-		val rawInput = instanceState.text.toString()
-
-		if (rawInput.isBlank()) {
-			instanceError = "Instance can't be empty"
-			return
-		}
-
-		if (!Regex("^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})(:\\d{1,5})?([/\\w .-]*)*/?\$").matches(rawInput)) {
-			instanceError = "Invalid instance format"
-			return
-		}
-
 		viewModelScope.launch {
 			_loginState.value = LoginState.Loading
 			_loginState.value = try {
 				SessionManager.login(
-					rawInput.let {
+					instanceState.text.toString().let {
 						if (!it.startsWith("https://") && !it.startsWith("http://"))
 							"https://$it"
 						else it
