@@ -43,7 +43,9 @@ import navic.composeapp.generated.resources.option_dynamic_colour
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
+import navic.composeapp.generated.resources.option_show_progress_in_bar
 import navic.composeapp.generated.resources.option_system_font
+import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.option_use_marquee_text
 import navic.composeapp.generated.resources.option_use_wavy_slider
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
@@ -246,10 +248,17 @@ fun SettingsAppearanceScreen() {
 						)
 					}
 					FormRow {
-						Text("Detached bottom bar")
+						Text(stringResource(Res.string.option_use_detached_bar))
 						SettingSwitch(
 							checked = Settings.shared.detachedBar,
 							onCheckedChange = { Settings.shared.detachedBar = it }
+						)
+					}
+					FormRow {
+						Text(stringResource(Res.string.option_show_progress_in_bar))
+						SettingSwitch(
+							checked = Settings.shared.showProgressInBar,
+							onCheckedChange = { Settings.shared.showProgressInBar = it }
 						)
 					}
 					FormRow {

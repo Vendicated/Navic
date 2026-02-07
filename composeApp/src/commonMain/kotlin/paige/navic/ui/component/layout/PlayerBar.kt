@@ -1,12 +1,16 @@
 package paige.navic.ui.component.layout
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -115,132 +121,175 @@ fun PlayerBar(
 			player.previous()
 		}
 	) {
-		ListItem(
-			modifier = modifier
+		Box(
+			modifier = Modifier
 				.padding(bottom = outerPadding, start = outerPadding, end = outerPadding)
-				.dropShadow(
-					shape,
-					Shadow(
-						radius = shadowRadius,
-						alpha = 0.5f
+				.clip(shape)
+		) {
+			ListItem(
+				modifier = modifier
+					.dropShadow(
+						shape,
+						Shadow(
+							radius = shadowRadius,
+							alpha = 0.5f
+						)
 					)
-				)
-				.pointerInput(Unit) {
-					var totalDrag = 0f
-					detectVerticalDragGestures(
-						onVerticalDrag = { _, dragAmount ->
-							totalDrag += dragAmount
-						},
-						onDragEnd = {
-							if (totalDrag < -150f) {
-								onClick()
+					.pointerInput(Unit) {
+						var totalDrag = 0f
+						detectVerticalDragGestures(
+							onVerticalDrag = { _, dragAmount ->
+								totalDrag += dragAmount
+							},
+							onDragEnd = {
+								if (totalDrag < -150f) {
+									onClick()
+								}
+								totalDrag = 0f
 							}
-							totalDrag = 0f
-						}
-					)
-				},
-			contentPadding = PaddingValues(contentPadding),
-			verticalAlignment = Alignment.CenterVertically,
-			colors = ListItemDefaults.colors(
-				containerColor = MaterialTheme.colorScheme.surfaceContainer
-			),
-			shapes = ListItemDefaults.shapes(
-				shape = shape,
-				selectedShape = shape,
-				pressedShape = shape,
-				focusedShape = shape,
-				hoveredShape = shape,
-				draggedShape = shape
-			),
-			onClick = onClick,
-			onLongClick = onClick,
-			leadingContent = {
-				Box(contentAlignment = Alignment.Center) {
-					AsyncImage(
-						model = coverUri,
-						contentDescription = null,
-						contentScale = ContentScale.Crop,
-						modifier = Modifier
-							.clip(
-								ContinuousRoundedRectangle(
-									if (detached) 12.dp else 10.dp
+						)
+					},
+				contentPadding = PaddingValues(contentPadding),
+				verticalAlignment = Alignment.CenterVertically,
+				colors = ListItemDefaults.colors(
+					containerColor = MaterialTheme.colorScheme.surfaceContainer
+				),
+				shapes = ListItemDefaults.shapes(
+					shape = shape,
+					selectedShape = shape,
+					pressedShape = shape,
+					focusedShape = shape,
+					hoveredShape = shape,
+					draggedShape = shape
+				),
+				onClick = onClick,
+				onLongClick = onClick,
+				leadingContent = {
+					Box(contentAlignment = Alignment.Center) {
+						AsyncImage(
+							model = coverUri,
+							contentDescription = null,
+							contentScale = ContentScale.Crop,
+							modifier = Modifier
+								.clip(
+									ContinuousRoundedRectangle(
+										if (detached) 12.dp else 10.dp
+									)
 								)
-							)
-							.background(MaterialTheme.colorScheme.surfaceVariant)
-							.size(coverSize)
-					)
-					if (coverUri.isNullOrEmpty()) {
-						Icon(
-							imageVector = vectorResource(Res.drawable.note),
-							contentDescription = null,
-							tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
+								.background(MaterialTheme.colorScheme.surfaceVariant)
+								.size(coverSize)
 						)
-					}
-				}
-			},
-			trailingContent = {
-				Row(
-					horizontalArrangement = Arrangement.spacedBy(iconSpacing)
-				) {
-					IconButton(
-						onClick = {
-							ctx.clickSound()
-							if (playerState.isPaused) {
-								player.resume()
-							} else {
-								player.pause()
-							}
-						},
-						enabled = playerState.currentTrack != null
-					) {
-						val painter = playPauseIconPainter(playerState.isPaused)
-						if (painter != null) {
+						if (coverUri.isNullOrEmpty()) {
 							Icon(
-								painter = painter,
+								imageVector = vectorResource(Res.drawable.note),
 								contentDescription = null,
-								modifier = Modifier.size(iconSize)
+								tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
 							)
-						} else {
+						}
+					}
+				},
+				trailingContent = {
+					Row(
+						horizontalArrangement = Arrangement.spacedBy(iconSpacing)
+					) {
+						IconButton(
+							onClick = {
+								ctx.clickSound()
+								if (playerState.isPaused) {
+									player.resume()
+								} else {
+									player.pause()
+								}
+							},
+							enabled = playerState.currentTrack != null
+						) {
+							val painter = playPauseIconPainter(playerState.isPaused)
+							if (painter != null) {
+								Icon(
+									painter = painter,
+									contentDescription = null,
+									modifier = Modifier.size(iconSize)
+								)
+							} else {
+								Icon(
+									imageVector = vectorResource(
+										if (playerState.isPaused)
+											Res.drawable.play_arrow
+										else Res.drawable.pause
+									),
+									contentDescription = null,
+									modifier = Modifier.size(iconSize)
+								)
+							}
+						}
+						IconButton(
+							onClick = {
+								ctx.clickSound()
+								player.next()
+							},
+							enabled = playerState.currentTrack != null
+						) {
 							Icon(
-								imageVector = vectorResource(
-									if (playerState.isPaused)
-										Res.drawable.play_arrow
-									else Res.drawable.pause
-								),
+								imageVector = vectorResource(Res.drawable.skip_next),
 								contentDescription = null,
 								modifier = Modifier.size(iconSize)
 							)
 						}
 					}
-					IconButton(
-						onClick = {
-							ctx.clickSound()
-							player.next()
-						},
-						enabled = playerState.currentTrack != null
-					) {
-						Icon(
-							imageVector = vectorResource(Res.drawable.skip_next),
-							contentDescription = null,
-							modifier = Modifier.size(iconSize)
-						)
+				},
+				content = {
+					track?.title?.let { title ->
+						MarqueeText(title)
+					}
+				},
+				supportingContent = {
+					if (track != null) {
+						track.artist?.let { artist ->
+							MarqueeText(artist)
+						}
+					} else {
+						MarqueeText(stringResource(Res.string.info_not_playing))
 					}
 				}
-			},
-			content = {
-				track?.title?.let { title ->
-					MarqueeText(title)
-				}
-			},
-			supportingContent = {
-				if (track != null) {
-					track.artist?.let { artist ->
-						MarqueeText(artist)
-					}
-				} else {
-					MarqueeText(stringResource(Res.string.info_not_playing))
+			)
+			if (Settings.shared.showProgressInBar) {
+				var dragging by remember { mutableStateOf(false) }
+				val alpha by animateFloatAsState(
+					if (dragging) 1f else .7f
+				)
+				val progress by animateFloatAsState(
+					playerState.progress.coerceIn(0f, 1f)
+				)
+				Box(
+					modifier = Modifier
+						.fillMaxWidth()
+						.height(10.dp)
+						.pointerInput(Unit) {
+							detectDragGestures(
+								onDragStart = { dragging = true },
+								onDragEnd = { dragging = false }
+							) { change, _ ->
+								player.seek((change.position.x / size.width.toFloat()).coerceIn(0f, 1f))
+								change.consume()
+							}
+						}
+						.align(Alignment.BottomStart),
+					contentAlignment = Alignment.BottomStart
+				) {
+					Box(
+						Modifier
+							.background(MaterialTheme.colorScheme.surfaceContainerHighest)
+							.fillMaxWidth()
+							.height(3.dp)
+					)
+					Box(
+						Modifier
+							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
+							.fillMaxWidth(progress)
+							.height(3.dp)
+					)
 				}
 			}
-		)
+		}
 	}
 }

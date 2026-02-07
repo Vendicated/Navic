@@ -171,6 +171,7 @@ class Settings(
 	var accentColourS by preference(0f)
 	var accentColourV by preference(1f)
 	var useShortNavbar by preference(false)
+	var showProgressInBar by preference(true)
 	var artGridRounding by preference(16f)
 	var artGridItemsPerRow by preference(2)
 	var artGridItemSize by preference(150f)
