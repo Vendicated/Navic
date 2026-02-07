@@ -44,6 +44,7 @@ import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_navbar_tab_positions
 import navic.composeapp.generated.resources.option_short_navigation_bar
 import navic.composeapp.generated.resources.option_show_progress_in_bar
+import navic.composeapp.generated.resources.option_static_player_background
 import navic.composeapp.generated.resources.option_system_font
 import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.option_use_marquee_text
@@ -150,6 +151,15 @@ fun SettingsAppearanceScreen() {
 								}
 							}
 						}
+					}
+				}
+				Form {
+					FormRow {
+						Text(stringResource(Res.string.option_static_player_background))
+						SettingSwitch(
+							checked = Settings.shared.staticPlayerBackground,
+							onCheckedChange = { Settings.shared.staticPlayerBackground = it }
+						)
 					}
 				}
 				Form {

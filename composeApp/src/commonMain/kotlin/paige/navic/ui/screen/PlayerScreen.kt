@@ -488,10 +488,12 @@ fun PlayerScreen(
 			player.previous()
 		},
 		background = {
-			BlendBackground(
-				painter = sharedPainter,
-				isPaused = playerState.isPaused
-			)
+			if (!Settings.shared.staticPlayerBackground) {
+				BlendBackground(
+					painter = sharedPainter,
+					isPaused = playerState.isPaused
+				)
+			}
 		}
 	) {
 		Column(
