@@ -12,6 +12,8 @@ on:
       - .github/workflows/build.yml
     tags:
       - 'v*'
+    branches:
+      - '*'
   pull_request:
     paths:
       - composeApp/**
