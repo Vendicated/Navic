@@ -8,6 +8,9 @@ Expressive design language.
 [![AltSource provides links for most sideloading apps, like Feather](.github/altsource.svg)][ALTSOURCE]
 [![Link to the latest release where you can download the APK or IPA directly](.github/direct_download.svg)][LATEST_RELEASE]
 [![Discord](.github/discord.svg)](https://discord.gg/TBcnNX66PH)
+[![Matrix](.github/matrix.svg)](https://matrix.to/#/#navic:nin0.dev)
+[![Translate](.github/translate.svg)](https://github.com/paigely/Navic/issues/3)
+[![Codeberg](.github/codeberg.svg)](https://codeberg.org/paige/Navic)
 
 </div>
 
