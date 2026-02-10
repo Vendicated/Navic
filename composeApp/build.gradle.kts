@@ -18,6 +18,11 @@ plugins {
 	alias(libs.plugins.valkyrie)
 }
 
+configurations.all {
+	exclude(group = "org.jetbrains.compose.material", module = "material")
+	exclude(group = "androidx.compose.material", module = "material")
+}
+
 valkyrie {
 	packageName = "paige.navic.icons"
 	generateAtSync = true

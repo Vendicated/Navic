@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -225,7 +224,7 @@ private fun LazyGridScope.header(
 	}
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun LazyGridScope.overviewButton(
 	icon: ImageVector,
 	label: StringResource,
