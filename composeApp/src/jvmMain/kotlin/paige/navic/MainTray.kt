@@ -8,24 +8,24 @@ import androidx.compose.ui.window.ApplicationScope
 import com.kdroid.composetray.tray.api.Tray
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.app_name
-import navic.composeapp.generated.resources.exit
-import navic.composeapp.generated.resources.ic_navic
-import navic.composeapp.generated.resources.play_arrow
-import navic.composeapp.generated.resources.skip_next
-import navic.composeapp.generated.resources.skip_previous
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
+import paige.navic.icons.Icons
+import paige.navic.icons.desktop.Navic
+import paige.navic.icons.filled.Play
+import paige.navic.icons.filled.SkipNext
+import paige.navic.icons.filled.SkipPrevious
+import paige.navic.icons.outlined.Exit
 
 @Composable
 fun ApplicationScope.MainTray(window: ComposeWindow?) {
 	Tray(
-		icon = vectorResource(Res.drawable.ic_navic),
+		icon = Icons.Desktop.Navic,
 		tooltip = stringResource(Res.string.app_name),
 		tint = if (isSystemInDarkTheme()) Color.White else Color.Black,
 	) {
-		Item("Previous", Res.drawable.skip_previous, isEnabled = false)
-		Item("Play", Res.drawable.play_arrow, isEnabled = false)
-		Item("Next", Res.drawable.skip_next, isEnabled = false)
+		Item("Previous", Icons.Filled.SkipPrevious, isEnabled = false)
+		Item("Play", Icons.Filled.Play, isEnabled = false)
+		Item("Next", Icons.Filled.SkipNext, isEnabled = false)
 
 		Divider()
 
@@ -35,7 +35,7 @@ fun ApplicationScope.MainTray(window: ComposeWindow?) {
 		}
 		Item(
 			label = "Exit",
-			icon = Res.drawable.exit
+			icon = Icons.Outlined.Exit
 		) {
 			(::exitApplication)()
 		}
