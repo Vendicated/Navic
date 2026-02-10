@@ -167,7 +167,7 @@ class Settings(
 ) : BasePreferenceManager(settings) {
 	var useSystemFont by preference(false)
 	var dynamicColour by preference(true)
-	var staticPlayerBackground by preference(false)
+	var animatePlayerBackground by preference(true)
 	var detachedBar by preference(true)
 	var swipeToSkip by preference(true)
 	var accentColourH by preference(0f)
@@ -176,16 +176,17 @@ class Settings(
 	var useShortNavbar by preference(false)
 	var showProgressInBar by preference(true)
 	var artGridRounding by preference(16f)
-	var artGridItemsPerRow by preference(2)
+	var gridSize by preference(GridSize.TwoByTwo)
 	var artGridItemSize by preference(150f)
 	var useMarquee by preference(true)
-	var marqueeDuration by preference(4000)
+	var marqueeSpeed by preference(MarqueeSpeed.Slow)
 	var alphabeticalScroll by preference(false)
 	var useWavySlider by preference(true)
 	var lyricsAutoscroll by preference(true)
 	var lyricsBeatByBeat by preference(true)
-	var scrobblePercentage by preference(.7f)
-	var minDurationToScrobble by preference(60f)
+	var enableScrobbling by preference(true)
+	var scrobblePercentage by preference(.5f)
+	var minDurationToScrobble by preference(30f)
 	var windowPlacement by preference(0)
 	var windowPositionX by preference(100f)
 	var windowPositionY by preference(100f)
@@ -196,5 +197,15 @@ class Settings(
 		val shared = paige.navic.data.model.Settings(
 			com.russhwolf.settings.Settings()
 		)
+	}
+	enum class MarqueeSpeed(val value: Int) {
+		Slow(6000),
+		Medium(4000),
+		Fast(1000)
+	}
+	enum class GridSize(val value: Int, val label: String) {
+		TwoByTwo(2, "2x2"),
+		ThreeByThree(3, "3x3"),
+		FourByFour(4, "4x4")
 	}
 }

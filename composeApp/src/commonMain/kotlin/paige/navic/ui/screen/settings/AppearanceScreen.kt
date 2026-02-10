@@ -1,6 +1,7 @@
-package paige.navic.ui.screen
+package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,28 +31,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kyant.capsule.ContinuousRoundedRectangle
 import dev.zt64.compose.pipette.CircularColorPicker
 import dev.zt64.compose.pipette.HsvColor
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.option_accent_colour
 import navic.composeapp.generated.resources.option_alphabetical_scroll
-import navic.composeapp.generated.resources.option_cover_art_rounding
+import navic.composeapp.generated.resources.option_artwork_shape
 import navic.composeapp.generated.resources.option_cover_art_size
 import navic.composeapp.generated.resources.option_dynamic_colour
 import navic.composeapp.generated.resources.option_grid_items_per_row
 import navic.composeapp.generated.resources.option_marquee_duration
-import navic.composeapp.generated.resources.option_navbar_tab_positions
-import navic.composeapp.generated.resources.option_short_navigation_bar
-import navic.composeapp.generated.resources.option_show_progress_in_bar
-import navic.composeapp.generated.resources.option_static_player_background
-import navic.composeapp.generated.resources.option_swipe_to_skip
 import navic.composeapp.generated.resources.option_system_font
-import navic.composeapp.generated.resources.option_use_detached_bar
 import navic.composeapp.generated.resources.option_use_marquee_text
-import navic.composeapp.generated.resources.option_use_wavy_slider
+import navic.composeapp.generated.resources.subtitle_dynamic_colour
 import navic.composeapp.generated.resources.subtitle_grid_items_per_row
 import navic.composeapp.generated.resources.subtitle_system_font
 import navic.composeapp.generated.resources.subtitle_use_marquee_text
@@ -63,17 +60,21 @@ import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Dropdown
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.SettingSwitch
-import paige.navic.ui.component.common.Stepper
-import paige.navic.ui.component.dialog.NavtabsDialog
+import paige.navic.ui.component.dialog.ArtworkShapeDialog
+import paige.navic.ui.component.dialog.GridSizeDialog
+import paige.navic.ui.component.dialog.GridSizePreview
+import paige.navic.ui.component.dialog.MarqueeSpeedDialog
+import paige.navic.ui.component.dialog.Shapes
 import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.settings.SettingCollapsibleRow
+import paige.navic.ui.component.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
-import kotlin.math.roundToInt
 
 @Composable
 fun SettingsAppearanceScreen() {
 	val ctx = LocalCtx.current
-	var showNavtabsDialog by rememberSaveable { mutableStateOf(false) }
+	var showArtworkShapeDialog by rememberSaveable { mutableStateOf(false) }
+
 	Scaffold(
 		topBar = { NestedTopBar(
 			{ Text(stringResource(Res.string.title_appearance)) },
@@ -91,27 +92,20 @@ fun SettingsAppearanceScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_system_font))
-							Text(
-								stringResource(Res.string.subtitle_system_font),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.useSystemFont,
-							onCheckedChange = { Settings.shared.useSystemFont = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_dynamic_colour))
-						SettingSwitch(
-							checked = Settings.shared.dynamicColour,
-							onCheckedChange = { Settings.shared.dynamicColour = it }
-						)
-					}
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_system_font)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_system_font)) },
+						value = Settings.shared.useSystemFont,
+						onSetValue = { Settings.shared.useSystemFont = it }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_dynamic_colour)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_dynamic_colour)) },
+						value = Settings.shared.dynamicColour,
+						onSetValue = { Settings.shared.dynamicColour = it }
+					)
+
 					if (!Settings.shared.dynamicColour) {
 						var expanded by remember { mutableStateOf(false) }
 						FormRow {
@@ -157,60 +151,57 @@ fun SettingsAppearanceScreen() {
 						}
 					}
 				}
+
 				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_static_player_background))
-						SettingSwitch(
-							checked = Settings.shared.staticPlayerBackground,
-							onCheckedChange = { Settings.shared.staticPlayerBackground = it }
-						)
-					}
-				}
-				Form {
-					FormRow {
-						Column(Modifier.fillMaxWidth()) {
-							Row(
-								modifier = Modifier.fillMaxWidth(),
-								horizontalArrangement = Arrangement.SpaceBetween
-							) {
-								Text(stringResource(Res.string.option_cover_art_rounding))
-								Text(
-									"${Settings.shared.artGridRounding}",
-									fontFamily = mapleMono(),
-									fontWeight = FontWeight(400),
-									fontSize = 13.sp,
-									color = MaterialTheme.colorScheme.onSurfaceVariant,
-								)
-							}
-							Slider(
-								value = Settings.shared.artGridRounding,
-								onValueChange = {
-									Settings.shared.artGridRounding = it
-								},
-								valueRange = 0f..64f,
-								steps = 3,
+					FormRow(
+						onClick = {
+							showArtworkShapeDialog = true
+						}
+					) {
+						Column(Modifier.weight(1f)) {
+							Text(stringResource(Res.string.option_artwork_shape))
+							Text(
+								Shapes.firstOrNull { it.second == Settings.shared.artGridRounding }?.first
+									?: Shapes[0].first,
+								style = MaterialTheme.typography.bodyMedium,
+								color = MaterialTheme.colorScheme.onSurfaceVariant
 							)
 						}
+
+						val shape =
+							ContinuousRoundedRectangle(Settings.shared.artGridRounding.dp / 1.5f)
+						Box(
+							modifier = Modifier
+								.size(48.dp)
+								.clip(shape)
+								.background(MaterialTheme.colorScheme.onPrimary)
+								.border(2.dp, MaterialTheme.colorScheme.primary, shape)
+						)
 					}
-					FormRow {
+
+					var presented by remember { mutableStateOf(false) }
+					val onClick = { presented = true }
+					FormRow(
+						onClick = if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact)
+							onClick
+						else null
+					) {
 						if (ctx.sizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
-							Column(
-								modifier = Modifier
-									.weight(1f, fill = true)
-									.padding(end = 8.dp)
-							) {
-								Text(stringResource(Res.string.option_grid_items_per_row) + ": ${Settings.shared.artGridItemsPerRow}")
+
+							Column(Modifier.weight(1f)) {
+								Text(stringResource(Res.string.option_grid_items_per_row))
 								Text(
 									stringResource(Res.string.subtitle_grid_items_per_row),
 									style = MaterialTheme.typography.bodyMedium,
 									color = MaterialTheme.colorScheme.onSurfaceVariant
 								)
 							}
-							Stepper(
-								value = Settings.shared.artGridItemsPerRow,
-								onValueChange = { Settings.shared.artGridItemsPerRow = it },
-								minValue = 1,
-								maxValue = 32
+
+							GridSizePreview(Settings.shared.gridSize.value)
+
+							GridSizeDialog(
+								presented = presented,
+								onDismissRequest = { presented = false }
 							)
 						} else {
 							Column(Modifier.fillMaxWidth()) {
@@ -238,105 +229,45 @@ fun SettingsAppearanceScreen() {
 							}
 						}
 					}
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_use_marquee_text))
-							Text(
-								stringResource(Res.string.subtitle_use_marquee_text),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.useMarquee,
-							onCheckedChange = { Settings.shared.useMarquee = it }
-						)
-					}
-					if (Settings.shared.useMarquee) {
-						FormRow {
-							Column(Modifier.fillMaxWidth()) {
-								Row(
-									modifier = Modifier.fillMaxWidth(),
-									horizontalArrangement = Arrangement.SpaceBetween
-								) {
-									Text(stringResource(Res.string.option_marquee_duration))
-									Text(
-										"${Settings.shared.marqueeDuration}",
-										fontFamily = mapleMono(),
-										fontWeight = FontWeight(400),
-										fontSize = 13.sp,
-										color = MaterialTheme.colorScheme.onSurfaceVariant,
-									)
-								}
-								Slider(
-									value = Settings.shared.marqueeDuration.toFloat(),
-									onValueChange = {
-										Settings.shared.marqueeDuration = it.roundToInt()
-									},
-									valueRange = 500f..5000f,
-									steps = 8
-								)
-							}
-						}
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_alphabetical_scroll))
-						SettingSwitch(
-							checked = Settings.shared.alphabeticalScroll,
-							onCheckedChange = { Settings.shared.alphabeticalScroll = it }
-						)
-					}
 				}
+
 				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_short_navigation_bar))
-						SettingSwitch(
-							checked = Settings.shared.useShortNavbar,
-							onCheckedChange = { Settings.shared.useShortNavbar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_use_detached_bar))
-						SettingSwitch(
-							checked = Settings.shared.detachedBar,
-							onCheckedChange = { Settings.shared.detachedBar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_swipe_to_skip))
-						SettingSwitch(
-							checked = Settings.shared.swipeToSkip,
-							onCheckedChange = { Settings.shared.swipeToSkip = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_show_progress_in_bar))
-						SettingSwitch(
-							checked = Settings.shared.showProgressInBar,
-							onCheckedChange = { Settings.shared.showProgressInBar = it }
-						)
-					}
-					FormRow {
-						Text(stringResource(Res.string.option_use_wavy_slider))
-						SettingSwitch(
-							checked = Settings.shared.useWavySlider,
-							onCheckedChange = { Settings.shared.useWavySlider = it }
-						)
-					}
-					FormRow(
-						onClick = {
-							showNavtabsDialog = true
-						}
+					var marqueeSpeedPresented by remember { mutableStateOf(false) }
+
+					SettingCollapsibleRow(
+						title = { Text(stringResource(Res.string.option_use_marquee_text)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_use_marquee_text)) },
+						value = Settings.shared.useMarquee,
+						onSetValue = { Settings.shared.useMarquee = it }
 					) {
-						Text(stringResource(Res.string.option_navbar_tab_positions))
+						Row(
+							modifier = Modifier.fillMaxWidth().clickable {
+								marqueeSpeedPresented = true
+							},
+							horizontalArrangement = Arrangement.SpaceBetween
+						) {
+							Text(stringResource(Res.string.option_marquee_duration))
+							Text(Settings.shared.marqueeSpeed.name)
+						}
 					}
+
+					MarqueeSpeedDialog(
+						presented = marqueeSpeedPresented,
+						onDismissRequest = { marqueeSpeedPresented = false }
+					)
+
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_alphabetical_scroll)) },
+						value = Settings.shared.alphabeticalScroll,
+						onSetValue = { Settings.shared.alphabeticalScroll = it }
+					)
 				}
 				Spacer(Modifier.height(LocalContentPadding.current.calculateBottomPadding()))
 			}
 		}
+		ArtworkShapeDialog(
+			presented = showArtworkShapeDialog,
+			onDismissRequest = { showArtworkShapeDialog = false }
+		)
 	}
-	NavtabsDialog(
-		presented = showNavtabsDialog,
-		onDismissRequest = { showNavtabsDialog = false }
-	)
 }

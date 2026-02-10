@@ -1,4 +1,4 @@
-package paige.navic.ui.screen
+package paige.navic.ui.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,29 +24,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.option_lyrics_autoscroll
-import navic.composeapp.generated.resources.option_lyrics_beat_by_beat
+import navic.composeapp.generated.resources.option_enable_scrobbling
 import navic.composeapp.generated.resources.option_min_duration_to_scrobble
 import navic.composeapp.generated.resources.option_scrobble_percentage
-import navic.composeapp.generated.resources.subtitle_lyrics_beat_by_beat
-import navic.composeapp.generated.resources.title_behaviour
+import navic.composeapp.generated.resources.subtitle_enable_scrobbling
+import navic.composeapp.generated.resources.title_scrobbling
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.data.model.Settings
 import paige.navic.ui.component.common.Form
 import paige.navic.ui.component.common.FormRow
-import paige.navic.ui.component.common.SettingSwitch
 import paige.navic.ui.component.layout.NestedTopBar
+import paige.navic.ui.component.settings.SettingSwitchRow
 import paige.navic.ui.theme.mapleMono
 import kotlin.math.roundToInt
 
 @Composable
-fun SettingsBehaviourScreen() {
+fun ScrobblingScreen() {
 	val ctx = LocalCtx.current
 	Scaffold(
 		topBar = { NestedTopBar(
-			{ Text(stringResource(Res.string.title_behaviour)) },
+			{ Text(stringResource(Res.string.title_scrobbling)) },
 			hideBack = ctx.sizeClass.widthSizeClass >= WindowWidthSizeClass.Medium
 		) },
 		contentWindowInsets = WindowInsets.statusBars
@@ -61,27 +60,13 @@ fun SettingsBehaviourScreen() {
 					.padding(top = 16.dp, end = 16.dp, start = 16.dp)
 			) {
 				Form {
-					FormRow {
-						Text(stringResource(Res.string.option_lyrics_autoscroll))
-						SettingSwitch(
-							checked = Settings.shared.lyricsAutoscroll,
-							onCheckedChange = { Settings.shared.lyricsAutoscroll = it }
-						)
-					}
-					FormRow {
-						Column {
-							Text(stringResource(Res.string.option_lyrics_beat_by_beat))
-							Text(
-								stringResource(Res.string.subtitle_lyrics_beat_by_beat),
-								style = MaterialTheme.typography.bodyMedium,
-								color = MaterialTheme.colorScheme.onSurfaceVariant
-							)
-						}
-						SettingSwitch(
-							checked = Settings.shared.lyricsBeatByBeat,
-							onCheckedChange = { Settings.shared.lyricsBeatByBeat = it }
-						)
-					}
+					SettingSwitchRow(
+						title = { Text(stringResource(Res.string.option_enable_scrobbling)) },
+						subtitle = { Text(stringResource(Res.string.subtitle_enable_scrobbling)) },
+						value = Settings.shared.enableScrobbling,
+						onSetValue = { Settings.shared.enableScrobbling = it }
+					)
+
 					FormRow {
 						Column(Modifier.fillMaxWidth()) {
 							Row(
