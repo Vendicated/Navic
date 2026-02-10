@@ -21,6 +21,7 @@ kotlin {
 		}
 	}
 	iosArm64()
+	iosSimulatorArm64()
 	jvm {
 		compilerOptions {
 			jvmTarget = JvmTarget.JVM_17
