@@ -95,18 +95,21 @@ class MiniPlayerWidget : NowPlayingWidget() {
 				CircleIconButton(
 					imageProvider = ImageProvider(R.drawable.ic_previous),
 					contentDescription = "Previous",
+					contentColor = GlanceTheme.colors.onPrimaryContainer,
 					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS)),
 					backgroundColor = null
 				)
 				CircleIconButton(
 					imageProvider = ImageProvider(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
 					contentDescription = if (isPlaying) "Pause" else "Play",
+					contentColor = GlanceTheme.colors.onPrimaryContainer,
 					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)),
 					backgroundColor = null
 				)
 				CircleIconButton(
 					imageProvider = ImageProvider(R.drawable.ic_next),
 					contentDescription = "Next",
+					contentColor = GlanceTheme.colors.onPrimaryContainer,
 					onClick = actionSendBroadcast(createMediaIntent(context, KeyEvent.KEYCODE_MEDIA_NEXT)),
 					backgroundColor = null
 				)
