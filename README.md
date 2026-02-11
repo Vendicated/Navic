@@ -30,6 +30,10 @@ Expressive design language.
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
 | ![](.github/library.png) | ![](.github/player.png) | ![](.github/lyrics.png) | ![](.github/albums.png) |
 
+Widgets:
+
+![](https://github.com/user-attachments/assets/066f4b1b-352d-49bd-a5d9-2d20db2cd7a2)
+
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">
  <picture>
