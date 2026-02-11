@@ -13,7 +13,9 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -28,6 +30,8 @@ import paige.navic.widgets.nowplaying.NowPlayingWidget
 
 class TurnTableWidget : NowPlayingWidget() {
 
+	override val sizeMode = SizeMode.Exact
+
 	@Composable
 	override fun Content(
 		context: Context,
@@ -38,11 +42,15 @@ class TurnTableWidget : NowPlayingWidget() {
 	) {
 		val size = LocalSize.current
 		Box(
-			modifier = GlanceModifier.size(minOf(size.width, size.height)).padding(16.dp),
+			modifier = GlanceModifier
+				.size(minOf(size.width, size.height))
+				.padding(12.dp)
+				.clickable(actionStartActivity(launchIntent(context))),
 			contentAlignment = Alignment.Center
 		) {
 			Image(
-				provider = bitmap?.let { ImageProvider(it) } ?: ImageProvider(R.drawable.ic_note),
+				provider = bitmap?.let { ImageProvider(it) }
+					?: ImageProvider(R.drawable.ic_note),
 				contentDescription = null,
 				contentScale = ContentScale.Crop,
 				modifier = GlanceModifier

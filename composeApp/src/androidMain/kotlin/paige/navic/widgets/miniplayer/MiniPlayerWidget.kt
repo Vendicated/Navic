@@ -10,8 +10,11 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionSendBroadcast
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -30,6 +33,7 @@ import paige.navic.widgets.nowplaying.NowPlayingWidget
 
 class MiniPlayerWidget : NowPlayingWidget() {
 
+	override val sizeMode = SizeMode.Exact
 	override val stateDefinition = PreferencesGlanceStateDefinition
 
 	@Composable
@@ -40,11 +44,16 @@ class MiniPlayerWidget : NowPlayingWidget() {
 		artist: String,
 		bitmap: Bitmap?
 	) {
+		val size = LocalSize.current
+		val rowPadding = 12.dp
+		val imageSize = size.height - (rowPadding * 2)
+
 		Row(
 			modifier = GlanceModifier
 				.background(GlanceTheme.colors.surface)
 				.fillMaxSize()
-				.padding(horizontal = 12.dp),
+				.padding(rowPadding)
+				.clickable(actionStartActivity(launchIntent(context))),
 			verticalAlignment = Alignment.CenterVertically
 		) {
 			Image(
@@ -52,12 +61,12 @@ class MiniPlayerWidget : NowPlayingWidget() {
 				contentDescription = null,
 				contentScale = ContentScale.Crop,
 				modifier = GlanceModifier
-					.size(76.dp)
+					.size(imageSize)
 					.background(GlanceTheme.colors.surfaceVariant)
-					.appWidgetInnerCornerRadius(8.dp)
+					.appWidgetInnerCornerRadius(rowPadding)
 			)
 
-			Column(modifier = GlanceModifier.defaultWeight().padding(start = 12.dp)) {
+			Column(modifier = GlanceModifier.defaultWeight().padding(horizontal = rowPadding)) {
 				Text(
 					text = title,
 					style = TextStyle(color = GlanceTheme.colors.onSurface, fontSize = 16.sp),
@@ -65,10 +74,7 @@ class MiniPlayerWidget : NowPlayingWidget() {
 				)
 				Text(
 					text = artist,
-					style = TextStyle(
-						color = GlanceTheme.colors.onSurfaceVariant,
-						fontSize = 14.sp
-					),
+					style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 14.sp),
 					maxLines = 1
 				)
 			}
