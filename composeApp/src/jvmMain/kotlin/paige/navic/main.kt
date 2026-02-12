@@ -9,6 +9,7 @@ import androidx.compose.ui.window.application
 
 fun main() = application {
 	var window by remember { mutableStateOf<ComposeWindow?>(null) }
+	System.setProperty("skiko.vsync.enabled", "false")
 	MainWindow(
 		window = window,
 		onSetWindow = { window = it }
