@@ -316,5 +316,11 @@ class Settings(
 				else lightIosColorScheme(Color(30, 215, 96))
 			}
 		}
+
+		fun isMaterialLike(): Boolean = when (this) {
+			Dynamic,
+			Seeded -> true
+			else -> false
+		}
 	}
 }

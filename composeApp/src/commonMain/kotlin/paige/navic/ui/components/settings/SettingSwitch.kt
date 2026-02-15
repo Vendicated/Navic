@@ -29,10 +29,7 @@ fun SettingSwitch(
 			uncheckedThumbColor = Color.White
 		),
 		thumbContent = {
-			if (Settings.shared.theme != Settings.Theme.iOS
-				&& Settings.shared.theme != Settings.Theme.Spotify
-				&& Settings.shared.theme != Settings.Theme.AppleMusic
-			) {
+			if (Settings.shared.theme.isMaterialLike()) {
 				Icon(
 					if (checked) Icons.Outlined.SwitchOn else Icons.Outlined.SwitchOff,
 					contentDescription = null,
