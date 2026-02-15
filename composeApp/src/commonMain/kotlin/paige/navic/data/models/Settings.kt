@@ -306,8 +306,8 @@ class Settings(
 					specVersion = ColorSpec.SpecVersion.SPEC_2025,
 				)
 				iOS -> if (isDark)
-					darkIosColorScheme()
-				else lightIosColorScheme()
+					darkIosColorScheme(Color(0, 145, 255))
+				else lightIosColorScheme(Color(0, 136, 255))
 				AppleMusic -> if (isDark)
 					darkIosColorScheme(Color(255, 55, 95))
 				else lightIosColorScheme(Color(255, 45, 85))
