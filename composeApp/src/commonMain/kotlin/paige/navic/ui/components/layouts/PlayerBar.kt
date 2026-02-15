@@ -302,12 +302,6 @@ fun PlayerBar(
 				) {
 					Box(
 						Modifier
-							.background(MaterialTheme.colorScheme.surfaceContainerHighest)
-							.fillMaxWidth()
-							.height(3.dp)
-					)
-					Box(
-						Modifier
 							.background(MaterialTheme.colorScheme.onSurface.copy(alpha = alpha))
 							.fillMaxWidth(if (track != null) progress else 0f)
 							.height(3.dp)
