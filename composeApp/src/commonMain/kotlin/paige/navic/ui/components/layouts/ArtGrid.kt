@@ -16,6 +16,8 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,7 +29,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
-import com.kyant.capsule.ContinuousCapsule
 import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
@@ -124,7 +125,9 @@ fun ArtGridPlaceholder(
 			modifier = Modifier
 				.fillMaxWidth()
 				.aspectRatio(1f)
-				.clip(MaterialTheme.shapes.large)
+				// placeholders shouldn't use continuous corners
+				// because it's less performant
+				.clip(RoundedCornerShape(16.0.dp))
 				.shimmerLoading()
 		)
 		Box(
@@ -132,7 +135,7 @@ fun ArtGridPlaceholder(
 				.padding(top = 6.dp)
 				.fillMaxWidth(0.8f)
 				.height(16.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 		Box(
@@ -140,7 +143,7 @@ fun ArtGridPlaceholder(
 				.padding(top = 4.dp)
 				.fillMaxWidth(0.6f)
 				.height(14.dp)
-				.clip(ContinuousCapsule)
+				.clip(CircleShape)
 				.shimmerLoading()
 		)
 	}

@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +42,6 @@ import paige.navic.ui.components.common.AlphabeticalScroller
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
 import paige.navic.ui.components.common.ErrorBox
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.ArtGridItem
 import paige.navic.ui.components.layouts.NestedTopBar
@@ -71,12 +71,12 @@ fun ArtistsScreen(
 			}
 		}
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier.padding(innerPadding).background(MaterialTheme.colorScheme.surface),
 			isRefreshing = artistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshArtists() }
-		) { topPadding ->
-			AnimatedContent(artistsState, Modifier.padding(top = topPadding)) {
+		) {
+			AnimatedContent(artistsState) {
 				when (it) {
 					is UiState.Loading -> ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
 						artGridPlaceholder()
@@ -183,7 +183,7 @@ fun ArtistsScreenItem(
 				Res.plurals.count_albums,
 				artist.albumCount ?: 0,
 				artist.albumCount ?: 0
-			) + "\n"
+			)
 		)
 		Dropdown(
 			expanded = selection == artist,

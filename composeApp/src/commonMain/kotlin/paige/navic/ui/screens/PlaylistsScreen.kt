@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,7 +45,6 @@ import paige.navic.icons.outlined.PlaylistRemove
 import paige.navic.icons.outlined.Share
 import paige.navic.ui.components.common.Dropdown
 import paige.navic.ui.components.common.DropdownItem
-import paige.navic.ui.components.common.RefreshBox
 import paige.navic.ui.components.dialogs.DeletionDialog
 import paige.navic.ui.components.dialogs.DeletionEndpoint
 import paige.navic.ui.components.dialogs.ShareDialog
@@ -105,14 +105,14 @@ fun PlaylistsScreen(
 			)
 		}
 	) { innerPadding ->
-		RefreshBox(
+		PullToRefreshBox(
 			modifier = Modifier
 				.padding(innerPadding)
 				.background(MaterialTheme.colorScheme.surface),
 			isRefreshing = playlistsState is UiState.Loading,
 			onRefresh = { viewModel.refreshPlaylists() }
-		) { topPadding ->
-			AnimatedContent(playlistsState, Modifier.padding(top = topPadding)) {
+		) {
+			AnimatedContent(playlistsState) {
 				ArtGrid(Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)) {
 					when (it) {
 						is UiState.Loading -> artGridPlaceholder()
@@ -188,10 +188,10 @@ fun PlaylistsScreenItem(
 						Res.plurals.count_songs,
 						playlist.songCount,
 						playlist.songCount
-					) + "\n"
+					)
 				)
 				playlist.comment?.let {
-					append("${playlist.comment}\n")
+					append("\n${playlist.comment}\n")
 				}
 			}
 		)
