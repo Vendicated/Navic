@@ -182,7 +182,7 @@ fun PlaylistsScreenItem(
 				.onRightClick {
 					viewModel.selectPlaylist(playlist)
 				},
-			imageUrl = playlist.coverArt,
+			coverArt = playlist.coverArt,
 			title = playlist.name,
 			subtitle = buildString {
 				append(

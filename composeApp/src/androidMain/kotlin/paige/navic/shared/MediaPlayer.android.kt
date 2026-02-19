@@ -139,7 +139,7 @@ class AndroidMediaPlayerViewModel(
 						putExtra("title", _uiState.value.currentTrack?.title ?: "Unknown track")
 						putExtra("artist", _uiState.value.currentTrack?.artist ?: "Unknown artist")
 						putExtra("artUrl", SessionManager.api.getCoverArtUrl(
-							id = _uiState.value.currentTrack?.coverArt, auth = true, size = 700
+							id = _uiState.value.currentTrack?.coverArt, auth = true
 						))
 					}
 

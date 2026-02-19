@@ -53,6 +53,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kyant.capsule.ContinuousRoundedRectangle
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.action_add_all_to_playlist
@@ -79,6 +83,7 @@ import paige.navic.LocalMediaPlayer
 import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.icons.Icons
 import paige.navic.icons.brand.Lastfm
 import paige.navic.icons.brand.Musicbrainz
@@ -415,11 +420,22 @@ fun TracksScreen(
 
 @Composable
 private fun TracksScreenScope.Metadata() {
+	val platformContext = LocalPlatformContext.current
 	val uriHandler = LocalUriHandler.current
 	val backStack = LocalNavStack.current
 	val artGridRounding = Settings.shared.artGridRounding
+	val model = remember(tracks.coverArt) {
+		ImageRequest.Builder(platformContext)
+			.data(SessionManager.api.getCoverArtUrl(tracks.coverArt, auth = true))
+			.memoryCacheKey(tracks.coverArt)
+			.diskCacheKey(tracks.coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.crossfade(500)
+			.build()
+	}
 	AsyncImage(
-		model = tracks.coverArt,
+		model = model,
 		contentDescription = tracks.title,
 		contentScale = ContentScale.Crop,
 		modifier = Modifier
@@ -435,7 +451,7 @@ private fun TracksScreenScope.Metadata() {
 			)
 			.background(MaterialTheme.colorScheme.surfaceContainer)
 			.clickable {
-				tracks.coverArt?.let { uri ->
+				(model.data as? String)?.let { uri ->
 					uriHandler.openUri(uri)
 				}
 			}

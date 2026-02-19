@@ -258,7 +258,7 @@ fun AlbumsScreenItem(
 				.onRightClick {
 					viewModel.selectAlbum(album)
 				},
-			imageUrl = album.coverArt,
+			coverArt = album.coverArt,
 			title = album.name,
 			subtitle = album.artist ?: stringResource(Res.string.info_unknown_artist),
 		)

@@ -177,7 +177,7 @@ fun ArtistsScreenItem(
 				.onRightClick {
 					viewModel.selectArtist(artist)
 				},
-			imageUrl = artist.coverArt,
+			coverArt = artist.coverArt,
 			title = artist.name,
 			subtitle = pluralStringResource(
 				Res.plurals.count_albums,

@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +35,7 @@ import paige.navic.LocalContentPadding
 import paige.navic.LocalCtx
 import paige.navic.LocalImageBuilder
 import paige.navic.data.models.Settings
+import paige.navic.data.session.SessionManager
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
 import paige.navic.utils.shimmerLoading
@@ -68,24 +70,27 @@ fun ArtGrid(
 @Composable
 fun ArtGridItem(
 	imageModifier: Modifier = Modifier,
-	imageUrl: String?,
+	coverArt: String?,
 	title: String,
 	subtitle: String? = null
 ) {
 	val imageBuilder = LocalImageBuilder.current
 	val artGridRounding = Settings.shared.artGridRounding
+	val model = remember(coverArt) {
+		imageBuilder
+			.data(SessionManager.api.getCoverArtUrl(coverArt, auth = true))
+			.memoryCacheKey(coverArt)
+			.diskCacheKey(coverArt)
+			.diskCachePolicy(CachePolicy.ENABLED)
+			.memoryCachePolicy(CachePolicy.ENABLED)
+			.build()
+	}
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
 	) {
 		AsyncImage(
-			model = imageBuilder
-				.data(imageUrl)
-				.memoryCacheKey(imageUrl)
-				.diskCacheKey(imageUrl)
-				.diskCachePolicy(CachePolicy.ENABLED)
-				.memoryCachePolicy(CachePolicy.ENABLED)
-				.build(),
+			model = model,
 			contentDescription = title,
 			contentScale = ContentScale.Crop,
 			modifier = Modifier
