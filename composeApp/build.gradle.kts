@@ -140,7 +140,7 @@ android {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 		versionCode = 7
-		versionName = "1.0.0-alpha17"
+		versionName = "v1.0.0-alpha17"
 	}
 
 	signingConfigs {
