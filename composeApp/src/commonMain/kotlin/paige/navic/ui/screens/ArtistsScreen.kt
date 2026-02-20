@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -49,7 +48,6 @@ import paige.navic.ui.components.layouts.RootTopBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.ArtistsViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.subsonic.api.models.Artist
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -166,17 +164,11 @@ fun ArtistsScreenItem(
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier
-				.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						backStack.add(Screen.Artist(artist.id))
-					},
-					onLongClick = { viewModel.selectArtist(artist) }
-				)
-				.onRightClick {
-					viewModel.selectArtist(artist)
-				},
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Artist(artist.id))
+			},
+			onLongClick = { viewModel.selectArtist(artist) },
 			coverArt = artist.coverArt,
 			title = artist.name,
 			subtitle = pluralStringResource(

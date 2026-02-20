@@ -8,7 +8,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -254,12 +253,11 @@ fun ArtistScreen(
 							) {
 								items(similarArtists) { artist ->
 									ArtGridItem(
-										imageModifier = Modifier.size(150.dp).combinedClickable(
-											onClick = {
-												ctx.clickSound()
-												backStack.add(Screen.Artist(artist.id))
-											}
-										),
+										imageModifier = Modifier.size(150.dp),
+										onClick = {
+											ctx.clickSound()
+											backStack.add(Screen.Artist(artist.id))
+										},
 										coverArt = artist.coverArt,
 										title = artist.name
 									)

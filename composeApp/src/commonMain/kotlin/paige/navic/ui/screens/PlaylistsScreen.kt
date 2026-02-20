@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.offset
@@ -56,7 +55,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.PlaylistsViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.subsonic.api.models.Playlist
 import kotlin.time.Duration
 
@@ -169,19 +167,11 @@ fun PlaylistsScreenItem(
 	val selection by viewModel.selectedPlaylist.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier
-				.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						backStack.add(Screen.Tracks(playlist))
-					},
-					onLongClick = {
-						viewModel.selectPlaylist(playlist)
-					}
-				)
-				.onRightClick {
-					viewModel.selectPlaylist(playlist)
-				},
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Tracks(playlist))
+			},
+			onLongClick = { viewModel.selectPlaylist(playlist) },
 			coverArt = playlist.coverArt,
 			title = playlist.name,
 			subtitle = buildString {

@@ -1,6 +1,9 @@
 package paige.navic.ui.components.layouts
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -38,6 +42,7 @@ import paige.navic.data.models.Settings
 import paige.navic.data.session.SessionManager
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
+import paige.navic.utils.onRightClick
 import paige.navic.utils.shimmerLoading
 
 @Composable
@@ -70,10 +75,13 @@ fun ArtGrid(
 @Composable
 fun ArtGridItem(
 	imageModifier: Modifier = Modifier,
+	onClick: () -> Unit,
+	onLongClick: (() -> Unit)? = null,
 	coverArt: String?,
 	title: String,
 	subtitle: String? = null
 ) {
+	val interactionSource = remember { MutableInteractionSource() }
 	val imageBuilder = LocalImageBuilder.current
 	val artGridRounding = Settings.shared.artGridRounding
 	val model = remember(coverArt) {
@@ -88,6 +96,13 @@ fun ArtGridItem(
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
+			.combinedClickable(
+				interactionSource = interactionSource,
+				indication = null,
+				onClick = onClick,
+				onLongClick = onLongClick
+			)
+			.onRightClick { onLongClick?.invoke() }
 	) {
 		AsyncImage(
 			model = model,
@@ -99,6 +114,7 @@ fun ArtGridItem(
 				.clip(
 					ContinuousRoundedRectangle(artGridRounding.dp)
 				)
+				.indication(interactionSource, ripple())
 				.background(MaterialTheme.colorScheme.surfaceContainer)
 				.then(imageModifier)
 		)

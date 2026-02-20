@@ -2,7 +2,6 @@ package paige.navic.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -70,7 +69,6 @@ import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.utils.UiState
-import paige.navic.utils.onRightClick
 import paige.subsonic.api.models.Album
 import paige.subsonic.api.models.ListType
 import kotlin.time.Duration
@@ -245,19 +243,11 @@ fun AlbumsScreenItem(
 	val starredState by viewModel.starredState.collectAsState()
 	Box(modifier) {
 		ArtGridItem(
-			imageModifier = Modifier
-				.combinedClickable(
-					onClick = {
-						ctx.clickSound()
-						backStack.add(Screen.Tracks(album))
-					},
-					onLongClick = {
-						viewModel.selectAlbum(album)
-					}
-				)
-				.onRightClick {
-					viewModel.selectAlbum(album)
-				},
+			onClick = {
+				ctx.clickSound()
+				backStack.add(Screen.Tracks(album))
+			},
+			onLongClick = { viewModel.selectAlbum(album) },
 			coverArt = album.coverArt,
 			title = album.name,
 			subtitle = album.artist ?: stringResource(Res.string.info_unknown_artist),
