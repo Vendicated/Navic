@@ -78,6 +78,7 @@ import paige.navic.ui.screens.LibraryScreen
 import paige.navic.ui.screens.LyricsScreen
 import paige.navic.ui.screens.PlayerScreen
 import paige.navic.ui.screens.PlaylistsScreen
+import paige.navic.ui.screens.QueueScreen
 import paige.navic.ui.screens.SearchScreen
 import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.TrackInfoScreen
@@ -233,7 +234,10 @@ private fun entryProvider(
 		}
 
 		// misc
-		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet(maxWidth = Dp.Unspecified)) {
+		entry<Screen.Player>(metadata = BottomSheetSceneStrategy.bottomSheet(
+			maxWidth = Dp.Unspecified,
+			screenType = "player"
+		)) {
 			PlayerScreen()
 		}
 		entry<Screen.Lyrics>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
@@ -241,6 +245,9 @@ private fun entryProvider(
 			val playerState by player.uiState.collectAsState()
 			val track = playerState.currentTrack
 			LyricsScreen(track)
+		}
+		entry<Screen.Queue>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
+			QueueScreen()
 		}
 		entry<Screen.Tracks>(metadata = detailPane("root")) { key ->
 			TracksScreen(key.partialCollection)
