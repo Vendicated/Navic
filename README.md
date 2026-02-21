@@ -27,15 +27,7 @@ Expressive design language.
 ## Screenshots
 |         Library          |         Player          |         Lyrics          |         Albums          |
 |:------------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| ![](.github/library.png) | ![](.github/player.png) | ![](.github/lyrics.png) | ![](.github/albums.png) |
-
-### Misc. screenshots
-
-| Widgets                                                                              | Theme presets setting (#1)                                                                                | Theme presets setting (#2)                                                                                |
-|:------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
-| ![](https://github.com/user-attachments/assets/066f4b1b-352d-49bd-a5d9-2d20db2cd7a2) | <img width="300" src="https://github.com/user-attachments/assets/75a7c7ac-bd0f-40ee-bc02-a75079d3c8e3" /> | <img width="300" src="https://github.com/user-attachments/assets/afe24e10-b452-4cc9-bd20-132ce87f4df4" /> |
-
-<sub>Themes are just a fun optional gimmick, this app will continue to use Material design by default</sub>
+| ![](https://github.com/user-attachments/assets/fd83280c-69ee-401b-8bf6-158fb2eae321) | ![](https://github.com/user-attachments/assets/092f10f7-b7ed-4c76-a546-5eaa95ac64c3) | ![](https://github.com/user-attachments/assets/b81fefc0-8883-4c71-914d-9b5528b1bb2c) | ![](https://github.com/user-attachments/assets/f49f0846-67c4-4c3b-a871-a5632e82a455) |
 
 ## Star History
 <a href="https://star-history.com/#paigely/Navic&Date">
