@@ -9,8 +9,8 @@ handle_error() {
   exit 1
 }
 
-echo "Fetching latest release data from GitHub..."
-release_info=$(curl -s https://api.github.com/repos/paigely/Navic/releases/latest)
+echo "Fetching latest release data from Codeberg..."
+release_info=$(curl -s https://codeberg.org/api/v1/repos/paige/Navic/releases/latest)
 clean_release_info=$(echo "$release_info" | tr -d '\000-\037')
 
 updated_at=$(echo "$clean_release_info" | jq -r '.published_at // .created_at // empty')
@@ -19,7 +19,7 @@ version=$(echo "$clean_release_info" | jq -r '.tag_name // empty')
 echo "Release version: $version"
 echo "Updated at: $updated_at"
 
-ipa_files=$(echo "$clean_release_info" | jq -r '[.assets[]? | select(.name | endswith(".ipa") or endswith(".tipa")) | {
+ipa_files=$(echo "$clean_release_info" | jq -r '[.attachments[]? | select(.name | endswith(".ipa") or endswith(".tipa")) | {
     name: .name,
     size: (.size | tonumber),
     download_url: .browser_download_url
@@ -70,7 +70,6 @@ if [ "$(echo "$ipa_files" | jq 'length')" -gt 0 ]; then
                --arg date "$updated_at" \
                --argjson size "$size" \
                --arg url "$download_url" \
-               --arg name "$name" \
                '.apps[$index | tonumber].version = $version |
                 .apps[$index | tonumber].versionDate = $date |
                 .apps[$index | tonumber].size = ($size | tonumber) |
