@@ -1,8 +1,3 @@
-> [!NOTE]
-> Since my Github account is back, development will continue
-> on it again. You will need to update Obtainium/AltStore accordingly.
-> You can read more about what happened on [Discord](https://discord.gg/TBcnNX66PH).
-
 <div align="center">
 
 # Navic
