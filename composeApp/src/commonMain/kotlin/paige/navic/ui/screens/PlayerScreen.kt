@@ -1,5 +1,7 @@
 package paige.navic.ui.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -33,6 +35,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -131,6 +134,7 @@ fun PlayerScreen() {
 	}
 	val sharedPainter = rememberTrackPainter(track?.id, track?.coverArt)
 
+	val isBuffering = playerState.isLoading
 	val enabled = playerState.currentTrack != null
 
 	var isStarred by remember(playerState.currentTrack) {
@@ -403,20 +407,30 @@ fun PlayerScreen() {
 				interactionSource = interactionSource
 			) {
 				val painter = playPauseIconPainter(playerState.isPaused)
-				if (painter != null) {
-					Icon(
-						painter = painter,
-						contentDescription = null,
-						modifier = Modifier.size(40.dp)
-					)
-				} else {
-					Icon(
-						imageVector = if (playerState.isPaused)
-							Icons.Filled.Play
-						else Icons.Filled.Pause,
-						contentDescription = null,
-						modifier = Modifier.size(40.dp)
-					)
+				AnimatedContent(isBuffering) { isBuffering ->
+					if (!isBuffering) {
+						if (painter != null) {
+							Icon(
+								painter = painter,
+								contentDescription = null,
+								modifier = Modifier.size(40.dp)
+							)
+						} else {
+							Icon(
+								imageVector = if (playerState.isPaused)
+									Icons.Filled.Play
+								else Icons.Filled.Pause,
+								contentDescription = null,
+								modifier = Modifier.size(40.dp)
+							)
+						}
+					} else {
+						CircularProgressIndicator(
+							Modifier.size(40.dp),
+							color = MaterialTheme.colorScheme.onPrimary,
+							trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = .5f),
+						)
+					}
 				}
 			}
 			IconButton(
