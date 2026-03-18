@@ -29,6 +29,7 @@
 	<string name="title_fonts_inbuilt">In-built</string>
 	<string name="title_fonts_external">External</string>
 	<string name="title_more_by_artist">More by %1$s</string>
+	<string name="title_genres">Genres</string>
 
 	<string name="subtitle_appearance">Change the theme and colours of the app</string>
 	<string name="subtitle_behaviour">Change how things work</string>

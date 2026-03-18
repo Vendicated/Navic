@@ -120,7 +120,11 @@ fun PlaylistsScreen(
 				)
 			}
 		},
-		bottomBar = { RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward) }
+		bottomBar = {
+			if (!nested) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			}
+		}
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

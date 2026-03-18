@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import paige.navic.data.models.Settings
 import paige.navic.data.repositories.AlbumsRepository
 import paige.navic.data.session.SessionManager
 import paige.navic.utils.UiState

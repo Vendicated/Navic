@@ -27,6 +27,10 @@ sealed interface Screen : NavKey {
 		val nested: Boolean = false,
 		val listType: AlbumListType? = null
 	) : Screen
+	@Serializable
+	data class Genres(
+		val nested: Boolean = false
+	) : Screen
 
 	// misc
 	@Serializable data object Player : Screen

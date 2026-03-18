@@ -27,6 +27,7 @@ import kotlinx.serialization.json.Json
 import navic.composeapp.generated.resources.Res
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_artists
+import navic.composeapp.generated.resources.title_genres
 import navic.composeapp.generated.resources.title_library
 import navic.composeapp.generated.resources.title_playlists
 import navic.composeapp.generated.resources.title_search
@@ -44,6 +45,7 @@ import paige.navic.icons.filled.Artist
 import paige.navic.icons.filled.LibraryMusic
 import paige.navic.icons.outlined.Album
 import paige.navic.icons.outlined.Artist
+import paige.navic.icons.outlined.Genre
 import paige.navic.icons.outlined.LibraryMusic
 import paige.navic.icons.outlined.PlaylistPlay
 import paige.navic.icons.outlined.Search
@@ -85,6 +87,12 @@ private enum class NavItem(
 		icon = Icons.Outlined.Search,
 		iconUnselected = Icons.Outlined.Search,
 		label = Res.string.title_search
+	),
+	GENRES(
+		destination = Screen.Genres(),
+		icon = Icons.Outlined.Genre,
+		iconUnselected = Icons.Outlined.Genre,
+		label = Res.string.title_genres
 	)
 }
 
@@ -119,6 +127,7 @@ fun BottomBar(
 						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
 						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
+						NavbarTab.Id.GENRES -> NavItem.GENRES
 					}
 					val selected = backStack.lastOrNull() == item.destination
 
@@ -168,6 +177,7 @@ fun BottomBar(
 						NavbarTab.Id.PLAYLISTS -> NavItem.PLAYLISTS
 						NavbarTab.Id.ARTISTS -> NavItem.ARTISTS
 						NavbarTab.Id.SEARCH -> NavItem.SEARCH
+						NavbarTab.Id.GENRES -> NavItem.GENRES
 					}
 					val selected = backStack.last() == item.destination
 

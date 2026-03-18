@@ -71,7 +71,11 @@ fun ArtistsScreen(
 				NestedTopBar({ Text(stringResource(Res.string.title_artists)) })
 			}
 		},
-		bottomBar = { RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward) }
+		bottomBar = {
+			if (!nested) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			}
+		}
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier

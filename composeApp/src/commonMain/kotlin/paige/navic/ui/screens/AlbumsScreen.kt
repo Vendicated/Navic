@@ -79,7 +79,7 @@ import kotlin.time.Duration
 fun AlbumsScreen(
 	nested: Boolean = false,
 	listType: AlbumListType? = null,
-	viewModel: AlbumsViewModel = viewModel(key = listType?.value) {
+	viewModel: AlbumsViewModel = viewModel(key = listType.toString()) {
 		AlbumsViewModel(listType)
 	}
 ) {
@@ -90,7 +90,9 @@ fun AlbumsScreen(
 	val isRefreshing by viewModel.isRefreshing.collectAsState()
 	val isPaginating by viewModel.isPaginating.collectAsState()
 	val actions: @Composable RowScope.() -> Unit = {
-		SortButton(!nested, viewModel)
+		if (listType == null) {
+			SortButton(!nested, viewModel)
+		}
 	}
 	val isLoggedIn = SessionManager.isLoggedIn.collectAsState()
 
@@ -106,7 +108,11 @@ fun AlbumsScreen(
 				NestedTopBar({ Text(stringResource(Res.string.title_albums)) }, actions)
 			}
 		},
-		bottomBar = { RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward) }
+		bottomBar = {
+			if (!nested) {
+				RootBottomBar(scrolled = viewModel.gridState.lastScrolledForward)
+			}
+		}
 	) { innerPadding ->
 		PullToRefreshBox(
 			modifier = Modifier
