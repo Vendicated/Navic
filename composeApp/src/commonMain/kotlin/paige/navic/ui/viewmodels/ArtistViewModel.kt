@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dev.zt64.subsonic.api.model.Artist
 import dev.zt64.subsonic.api.model.ArtistInfo
 import dev.zt64.subsonic.api.model.Song
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,18 +34,35 @@ class ArtistViewModel(
 		viewModelScope.launch {
 			try {
 				val artist = SessionManager.api.getArtist(artistId)
-				val topSongs = SessionManager.api.getTopSongs(artist)
-				val artistInfo = SessionManager.api.getArtistInfo(artist)
-				val similarArtists = artistInfo.similarArtists.map {
-					// albumCount is 0 unless you do getArtist on each one
-					SessionManager.api.getArtist(it.id)
+
+				coroutineScope {
+					val albumsDeferred = artist.album.map { album ->
+						async { SessionManager.api.getAlbum(album.id) }
+					}
+
+					val _artistInfo = async { SessionManager.api.getArtistInfo(artist) }
+
+					val albums = albumsDeferred.awaitAll()
+
+					val topSongs = albums.flatMap { album ->
+						album.songs
+							.sortedByDescending { it.playCount }
+							.filter { it.playCount > 0 }
+					}
+
+					val artistInfo = _artistInfo.await()
+
+					val similarArtists = artistInfo.similarArtists.map {
+						async { SessionManager.api.getArtist(it.id) }
+					}.awaitAll()
+
+					_artistState.value = UiState.Success(ArtistState(
+						artist,
+						topSongs,
+						artistInfo,
+						similarArtists
+					))
 				}
-				_artistState.value = UiState.Success(ArtistState(
-					artist,
-					topSongs,
-					artistInfo,
-					similarArtists
-				))
 			} catch (e: Exception) {
 				_artistState.value = UiState.Error(e)
 			}
