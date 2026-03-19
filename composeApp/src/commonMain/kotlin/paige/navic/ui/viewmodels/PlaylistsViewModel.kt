@@ -59,9 +59,7 @@ class PlaylistsViewModel(
 				_playlistsState.value = UiState.Success(playlists)
 				sortPlaylists()
 			} catch (e: Exception) {
-				if (!hasData) {
-					_playlistsState.value = UiState.Error(e)
-				}
+				_playlistsState.value = UiState.Error(e)
 			} finally {
 				_isRefreshing.value = false
 			}

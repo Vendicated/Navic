@@ -150,7 +150,7 @@ fun ArtistScreen(
 				modifier = Modifier.fillMaxSize()
 			) {
 				when (it) {
-					is UiState.Error -> Box(Modifier.fillMaxSize()) {
+					is UiState.Error -> Box(Modifier.fillMaxSize().padding(contentPadding)) {
 						ErrorBox(it)
 					}
 

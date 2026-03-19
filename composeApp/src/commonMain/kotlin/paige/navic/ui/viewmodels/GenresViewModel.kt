@@ -65,9 +65,7 @@ class GenresViewModel : ViewModel() {
 				}
 				_genresState.value = UiState.Success(genres)
 			} catch (e: Exception) {
-				if (!hasExistingData) {
-					_genresState.value = UiState.Error(e)
-				}
+				_genresState.value = UiState.Error(e)
 			} finally {
 				_isRefreshing.value = false
 			}

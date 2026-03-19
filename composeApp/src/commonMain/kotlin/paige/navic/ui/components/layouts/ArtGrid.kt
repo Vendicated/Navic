@@ -1,8 +1,6 @@
 package paige.navic.ui.components.layouts
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,24 +23,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import coil3.compose.AsyncImage
-import coil3.request.CachePolicy
-import com.kyant.capsule.ContinuousRoundedRectangle
 import paige.navic.LocalCtx
-import paige.navic.LocalImageBuilder
 import paige.navic.LocalSharedTransitionScope
 import paige.navic.data.models.settings.Settings
-import paige.navic.data.session.SessionManager
-import paige.navic.data.session.SessionManager.getCoverArtUrl
 import paige.navic.ui.components.common.CoverArt
 import paige.navic.ui.components.common.ErrorBox
 import paige.navic.utils.UiState
@@ -176,7 +166,7 @@ fun LazyGridScope.artGridPlaceholder(
 fun LazyGridScope.artGridError(
 	state: UiState.Error
 ) {
-	item(span = { GridItemSpan(maxCurrentLineSpan) }) {
+	item(span = { GridItemSpan(maxLineSpan) }) {
 		ErrorBox(
 			modifier = Modifier.animateItem(),
 			error = state

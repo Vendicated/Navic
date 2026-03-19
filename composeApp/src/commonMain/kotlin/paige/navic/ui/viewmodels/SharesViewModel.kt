@@ -45,9 +45,7 @@ class SharesViewModel(
 				val shares = repository.getShares()
 				_sharesState.value = UiState.Success(shares)
 			} catch (e: Exception) {
-				if (!hasData) {
-					_sharesState.value = UiState.Error(e)
-				}
+				_sharesState.value = UiState.Error(e)
 			} finally {
 				_isRefreshing.value = false
 			}

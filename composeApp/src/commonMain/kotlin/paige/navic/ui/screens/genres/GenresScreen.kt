@@ -22,11 +22,11 @@ import navic.composeapp.generated.resources.info_needs_log_in
 import navic.composeapp.generated.resources.title_genres
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.data.session.SessionManager
-import paige.navic.ui.components.common.ErrorBox
 import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.NestedTopBar
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.RootTopBar
+import paige.navic.ui.components.layouts.artGridError
 import paige.navic.ui.viewmodels.GenresViewModel
 import paige.navic.utils.UiState
 import paige.navic.utils.withoutTop
@@ -83,7 +83,7 @@ fun GenresScreen(
 					state = viewModel.gridState
 				) {
 					when (state) {
-						is UiState.Error -> item { ErrorBox(state) }
+						is UiState.Error -> artGridError(state)
 						is UiState.Loading -> items(10) { GenreCardPlaceholder() }
 						is UiState.Success -> items(state.data, { it.genre.name }) { genre ->
 							GenreCard(genre = genre)

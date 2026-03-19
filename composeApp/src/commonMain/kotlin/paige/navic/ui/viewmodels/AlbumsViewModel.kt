@@ -63,9 +63,7 @@ open class AlbumsViewModel(
 				val albums = repository.getAlbums(listType = _listType.value, offset = _offset.value)
 				_albumsState.value = UiState.Success(albums)
 			} catch (e: Exception) {
-				if (!hasExistingData) {
-					_albumsState.value = UiState.Error(e)
-				}
+				_albumsState.value = UiState.Error(e)
 			} finally {
 				_isRefreshing.value = false
 			}
