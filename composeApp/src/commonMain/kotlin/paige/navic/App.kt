@@ -77,7 +77,7 @@ import paige.navic.ui.screens.LyricsScreen
 import paige.navic.ui.screens.nowPlaying.NowPlayingScreen
 import paige.navic.ui.screens.PlaylistsScreen
 import paige.navic.ui.screens.QueueScreen
-import paige.navic.ui.screens.SearchScreen
+import paige.navic.ui.screens.search.SearchScreen
 import paige.navic.ui.screens.SharesScreen
 import paige.navic.ui.screens.genres.GenresScreen
 import paige.navic.ui.screens.settings.BottomBarScreen

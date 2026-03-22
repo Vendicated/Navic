@@ -1,33 +1,22 @@
-package paige.navic.ui.screens
+package paige.navic.ui.screens.search
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -36,20 +25,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kyant.capsule.ContinuousRoundedRectangle
@@ -58,26 +39,20 @@ import dev.zt64.subsonic.api.model.AlbumListType
 import dev.zt64.subsonic.api.model.Artist
 import dev.zt64.subsonic.api.model.Song
 import navic.composeapp.generated.resources.Res
-import navic.composeapp.generated.resources.action_clear_search
-import navic.composeapp.generated.resources.action_navigate_back
 import navic.composeapp.generated.resources.action_remove_from_history
 import navic.composeapp.generated.resources.action_search_history
 import navic.composeapp.generated.resources.title_albums
 import navic.composeapp.generated.resources.title_all
 import navic.composeapp.generated.resources.title_artists
-import navic.composeapp.generated.resources.title_search
 import navic.composeapp.generated.resources.title_songs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import paige.navic.LocalCtx
 import paige.navic.LocalMediaPlayer
-import paige.navic.LocalNavStack
 import paige.navic.data.models.Screen
 import paige.navic.data.models.settings.Settings
 import paige.navic.data.models.settings.enums.BottomBarVisibilityMode
 import paige.navic.icons.Icons
-import paige.navic.icons.outlined.ArrowBack
-import paige.navic.icons.outlined.Check
 import paige.navic.icons.outlined.Close
 import paige.navic.icons.outlined.History
 import paige.navic.ui.components.common.CoverArt
@@ -87,9 +62,13 @@ import paige.navic.ui.components.layouts.ArtGrid
 import paige.navic.ui.components.layouts.RootBottomBar
 import paige.navic.ui.components.layouts.artGridPlaceholder
 import paige.navic.ui.components.layouts.horizontalSection
+import paige.navic.ui.screens.AlbumsScreenItem
+import paige.navic.ui.screens.ArtistsScreenItem
+import paige.navic.ui.screens.search.components.SearchScreenChips
+import paige.navic.ui.screens.search.components.SearchScreenTopBar
+import paige.navic.ui.screens.search.viewmodels.SearchViewModel
 import paige.navic.ui.viewmodels.AlbumsViewModel
 import paige.navic.ui.viewmodels.ArtistsViewModel
-import paige.navic.ui.viewmodels.SearchViewModel
 import paige.navic.utils.LocalBottomBarScrollManager
 import paige.navic.utils.UiState
 
@@ -127,14 +106,14 @@ fun SearchScreen(
 						TopAppBarDefaults.windowInsets.asPaddingValues()
 					)
 			) {
-				SearchTopBar(
+				SearchScreenTopBar(
 					query = query,
 					nested = nested,
 					onSearch = { submittedQuery ->
 						viewModel.addToSearchHistory(submittedQuery)
 					}
 				)
-				SearchChips(
+				SearchScreenChips(
 					selectedCategory = selectedCategory,
 					onCategorySelect = { selectedCategory = it }
 				)
@@ -219,7 +198,8 @@ fun SearchScreen(
 								seeAll = false
 							) { album ->
 								AlbumsScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
 									album = album,
 									viewModel = albumsViewModel,
 									onSetShareId = { },
@@ -235,7 +215,8 @@ fun SearchScreen(
 								seeAll = false
 							) { artist ->
 								ArtistsScreenItem(
-									modifier = Modifier.animateItem(fadeInSpec = null).width(150.dp),
+									modifier = Modifier.animateItem(fadeInSpec = null)
+										.width(150.dp),
 									artist = artist,
 									viewModel = artistsViewModel,
 									tab = "search"
@@ -284,144 +265,6 @@ fun SearchScreen(
 							}
 						}
 					}
-				}
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Composable
-private fun SearchChips(
-	selectedCategory: SearchCategory,
-	onCategorySelect: (SearchCategory) -> Unit
-) {
-	val ctx = LocalCtx.current
-	Row(
-		modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-		horizontalArrangement = Arrangement.spacedBy(8.dp)
-	) {
-		SearchCategory.entries.forEach { category ->
-			val isSelected = category == selectedCategory
-			FilterChip(
-				modifier = Modifier
-					.animateContentSize(
-						if (isSelected)
-							MaterialTheme.motionScheme.fastSpatialSpec()
-						else MaterialTheme.motionScheme.defaultEffectsSpec()
-					),
-				selected = isSelected,
-				onClick = {
-					ctx.clickSound()
-					onCategorySelect(category)
-				},
-				label = {
-					Text(
-						stringResource(category.res),
-						maxLines = 1
-					)
-				},
-				shape = MaterialTheme.shapes.small,
-				leadingIcon = if (isSelected) {
-					{
-						Icon(
-							imageVector = Icons.Outlined.Check,
-							contentDescription = null,
-							modifier = Modifier.size(FilterChipDefaults.IconSize)
-						)
-					}
-				} else {
-					null
-				}
-			)
-		}
-	}
-}
-
-@Composable
-private fun SearchTopBar(
-	query: TextFieldState,
-	nested: Boolean,
-	onSearch: (String) -> Unit
-) {
-	val ctx = LocalCtx.current
-	val backStack = LocalNavStack.current
-
-	val focusManager = LocalFocusManager.current
-	val focusRequester = remember { FocusRequester() }
-
-	LaunchedEffect(Unit) {
-		focusRequester.requestFocus()
-	}
-
-	Row(
-		verticalAlignment = Alignment.CenterVertically
-	) {
-		if (nested) {
-			Box(
-				modifier = Modifier.size(56.dp),
-				contentAlignment = Alignment.Center
-			) {
-				IconButton(
-					onClick = {
-						ctx.clickSound()
-						focusManager.clearFocus(true)
-						if (backStack.size > 1) backStack.removeLastOrNull()
-					}
-				) {
-					Icon(
-						Icons.Outlined.ArrowBack,
-						contentDescription = stringResource(Res.string.action_navigate_back),
-						tint = MaterialTheme.colorScheme.onSurfaceVariant
-					)
-				}
-			}
-		}
-		BasicTextField(
-			state = query,
-			modifier = Modifier
-				.weight(1f)
-				.height(72.dp)
-				.padding(start = if (nested) 0.dp else 18.dp)
-				.focusRequester(focusRequester),
-			lineLimits = TextFieldLineLimits.SingleLine,
-			keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-			onKeyboardAction = {
-				focusManager.clearFocus()
-				if (query.text.isNotBlank()) {
-					onSearch(query.text.toString())
-				}
-			},
-			textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
-			cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-			decorator = { innerTextField ->
-				Box(contentAlignment = Alignment.CenterStart) {
-					if (query.text.isEmpty()) {
-						Text(
-							text = stringResource(Res.string.title_search),
-							color = MaterialTheme.colorScheme.onSurfaceVariant
-						)
-					}
-					innerTextField()
-				}
-			}
-		)
-		Box(
-			modifier = Modifier.size(56.dp),
-			contentAlignment = Alignment.Center
-		) {
-			if (query.text.isNotEmpty()) {
-				IconButton(
-					modifier = Modifier.padding(horizontal = 8.dp),
-					onClick = {
-						ctx.clickSound()
-						query.clearText()
-					}
-				) {
-					Icon(
-						Icons.Outlined.Close,
-						contentDescription = stringResource(Res.string.action_clear_search)
-					)
 				}
 			}
 		}

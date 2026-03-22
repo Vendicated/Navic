@@ -1,4 +1,4 @@
-package paige.navic.ui.viewmodels
+package paige.navic.ui.screens.search.viewmodels
 
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.text.input.TextFieldState
@@ -65,7 +65,7 @@ class SearchViewModel(
 
 		_searchHistory.value = currentList.take(10)
 	}
-	
+
 	fun removeFromSearchHistory(query: String) {
 		_searchHistory.value = _searchHistory.value.filter { it != query }
 	}
