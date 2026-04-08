@@ -153,7 +153,6 @@ kotlin {
 			implementation(libs.bundles.ktor.desktop)
 			implementation(compose.desktop.currentOs)
 			implementation(libs.kotlinx.coroutines.swing)
-			implementation(libs.nativeTray)
 		}
 	}
 
