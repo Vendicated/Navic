@@ -1,4 +1,3 @@
-
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -60,6 +59,9 @@ aboutLibraries {
 }
 
 tasks {
+	matching { it.name.startsWith("ksp") }.configureEach {
+		dependsOn(":composeApp:generateValkyrieImageVector")
+	}
 	named("copyNonXmlValueResourcesForCommonMain") {
 		dependsOn(":composeApp:exportLibraryDefinitions")
 	}
@@ -77,7 +79,8 @@ tasks {
 
 		doFirst {
 			tmp.asFile.mkdirs()
-			tmp.file("TextFieldDecorator.kt").asFile.writeText("""
+			tmp.file("TextFieldDecorator.kt").asFile.writeText(
+				"""
 package androidx.compose.foundation.text.input
 
 import androidx.compose.runtime.Composable
@@ -87,7 +90,8 @@ public fun interface TextFieldDecorator {
     @Composable
     public fun Decoration(innerTextField: @Composable () -> Unit)
 }
-""")
+"""
+			)
 		}
 		doLast {
 			tmp.asFile.deleteRecursively()

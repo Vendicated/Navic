@@ -22,21 +22,21 @@ import paige.navic.utils.UiState
 
 @Composable
 fun CollectionDetailScreenSongRowDropdown(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,
-    onRemoveStar: () -> Unit,
-    onAddStar: () -> Unit,
-    onShare: () -> Unit,
-    collection: DomainSongCollection,
+	expanded: Boolean,
+	onDismissRequest: () -> Unit,
+	onRemoveStar: () -> Unit,
+	onAddStar: () -> Unit,
+	onShare: () -> Unit,
+	collection: DomainSongCollection,
 	song: DomainSong,
-    onRemoveFromPlaylist: () -> Unit,
-    starredState: UiState<Boolean>,
-    downloadStatus: DownloadStatus?,
+	onRemoveFromPlaylist: () -> Unit,
+	starredState: UiState<Boolean>,
+	downloadStatus: DownloadStatus?,
 	isOnline: Boolean,
-    onDownload: () -> Unit,
-    onCancelDownload: () -> Unit,
-    onDeleteDownload: () -> Unit,
-    onAddToQueue: () -> Unit,
+	onDownload: () -> Unit,
+	onCancelDownload: () -> Unit,
+	onDeleteDownload: () -> Unit,
+	onAddToQueue: () -> Unit,
 ) {
 	val player = koinViewModel<MediaPlayerViewModel>()
 	val backStack = LocalNavStack.current

@@ -53,7 +53,7 @@
 	<string name="subtitle_developer">Debugging, testing</string>
 	<string name="subtitle_about">App info, version, licenses</string>
 	<string name="subtitle_playlist">Playlist</string>
-	<string	name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
+	<string name="subtitle_enable_scrobbling">Scrobble played tracks to your Navidrome server</string>
 	<string name="subtitle_gapless_playback">Experimental. Requires application restart. May conflict with audio offload on some devices</string>
 	<string name="subtitle_audio_offload">Experimental. Requires application restart. May conflict with gapless playback on some devices</string>
 	<string name="subtitle_now_playing_background_style">Choose static if you have performance issues</string>
@@ -98,7 +98,7 @@
 	<string name="option_min_duration_to_scrobble">Min. duration to scrobble</string>
 	<string name="option_playlist_name">Name</string>
 	<string name="option_playlist_songs">Songs</string>
-	<string	name="option_enable_scrobbling">Enable scrobbling</string>
+	<string name="option_enable_scrobbling">Enable scrobbling</string>
 	<string name="option_choose_theme">Application theme</string>
 	<string name="option_replay_gain">ReplayGain</string>
 	<string name="option_gapless_playback">Gapless playback</string>
